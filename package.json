@@ -1,0 +1,30 @@
+{
+  "name": "@narrative-sdk",
+  "version": "1.0.0",
+  "description": "Narrative SDK for event handling and command sending",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "type-check": "tsc --noEmit",
+    "prepare": "npm run build"
+  },
+  "author": {
+    "name": "Narrative",
+    "url": "http://narrative.tech"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/narrative-sdk.git"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  },
+  "peerDependencies": {
+    "typescript": "^5.3.3"
+  }
+}
