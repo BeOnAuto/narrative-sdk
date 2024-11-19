@@ -2,8 +2,7 @@
 
 [![npm version](https://badge.fury.io/js/narrative-studio-sdk.svg)](https://www.npmjs.com/package/narrative-studio-sdk)
 
-The Narrative SDK enables you to easily interact with the Narrative Studio through your app. 
-The SDK provides methods to interact with the Narrative Studio, such as creating, updating, and deleting entities, as well as subscribing to events and updating the store.
+The Narrative SDK provides an interface for interacting with Narrative Studio. It enables you to manage entities, handle events, and maintain a responsive read model, leveraging CQRS (Command Query Responsibility Segregation) for better scalability and performance.
 
 ## Installation
 
@@ -239,18 +238,80 @@ You can use the updateReadModel method to add, update, or delete entities in you
 **Example: Updating the Read Model Based on Events**
 ```typescript
 narrative.subscribeToEvents([ChangesSavedEvent], (event: ChangesSavedEvent) => {
-    event.changes.forEach((change) => {
-        narrative.updateReadModel({
-            id: change.entity.id,
-            type: change.entity.type,
-            data: change.entity,
+    // Handle added entities
+    event.changes.added
+        .filter((entity) => entity.type === 'CustomType') // Filter by type
+        .forEach((entity) => {
+            narrative.updateReadModel([
+                {
+                    id: entity.id,
+                    type: entity.type,
+                    data: entity,
+                },
+            ]);
         });
-    });
+
+    // Handle updated entities
+    event.changes.updated
+        .filter((update) => update.entity.type === 'CustomType') // Filter by type
+        .forEach((update) => {
+            narrative.updateReadModel([
+                {
+                    id: update.entity.id,
+                    type: update.entity.type,
+                    data: update.entity,
+                },
+            ]);
+        });
+
+    // Handle deleted entities
+    event.changes.deleted
+        .filter((deleted) => deleted.type === 'CustomType') // Filter by type
+        .forEach((deleted) => {
+            narrative.updateReadModel((currentState) =>
+                currentState.filter((item) => item.id !== deleted.id)
+            );
+        });
 });
 ```
 
+### 4. Integrate with Your Backend
 
+To create a seamless user experience, you can integrate Narrative SDK with your backend services. This allows you to:
+- Store data for persistence or auditing.
+- Enrich the read model with additional backend data.
+- Trigger backend workflows based on Narrative Studio events.
 
+**Example: Sending Custom Entity Changes to Your Backend**
+```typescript
+narrative.subscribeToEvents([ChangesSavedEvent], async (event: ChangesSavedEvent) => {
+  const customAddedEntities = event.changes.added.filter(
+    (entity) => entity.type === 'CustomType'
+  );
+
+  const customUpdatedEntities = event.changes.updated.filter(
+    (change) => change.entity.type === 'CustomType'
+  );
+
+  const customDeletedEntities = event.changes.deleted.filter(
+    (deleted) => deleted.type === 'CustomType'
+  );
+
+  if (customAddedEntities.length > 0 || customUpdatedEntities.length > 0 || customDeletedEntities.length > 0) {
+    await fetch('https://your-backend-api.com/entity-changes', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        added: customAddedEntities,
+        updated: customUpdatedEntities,
+        deleted: customDeletedEntities,
+      }),
+    });
+  }
+});
+```
 
 
 
