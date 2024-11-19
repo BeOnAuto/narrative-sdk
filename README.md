@@ -93,17 +93,17 @@ The App Manifest defines your app, its entities, and settings. It must be hosted
 - `version` - App version.
 - `appUrl` - Public URL of the app’s JavaScript file.
 - `vendor` - 
-  - `name` - Organization’s name 
-  - `website` - Organization’s website URL
+  - `name` - Organization’s name. 
+  - `website` - Organization’s website URL.
   - `supportUrl` - URL for app support.
 - `entities` Configurable building blocks in Narrative Studio.
     - `constructs` (optional) - Define new constructs for users.
-        - `type` - The type of the construct.
         - `caption` - The caption of the construct.
+        - `type` - The type of the construct.
         - `backgroundColor` - Hex Color code for the background color of the construct.
         - `textColor` - Hex Color code for the text color.
         - `shape` - The shape of the construct. Supported shapes are `rectangle` and `square`.
-        - `url` (optional) -  A URL to an XML file that describes the details pane for the asset. The details pane is a custom view that appears when the asset is clicked on in the Narrative Studio
+        - `url` (optional) -  A URL to an XML file that describes the details pane for the asset. The details pane is a custom view that appears when the asset is clicked on in the Narrative Studio.
     - `assets` (optional) - Define new assets for users. Assets are reusable resources which can be referenced in one or more constructs.
         - `caption` - The caption of the asset.
         - `type` - The type of the asset.
@@ -113,19 +113,19 @@ The App Manifest defines your app, its entities, and settings. It must be hosted
         - `url` (optional) -  A URL to an XML file that describes the details pane for the asset. The details pane is a custom view that appears when the asset is clicked on in the Narrative Studio.
 - `settings` (optional) - The settings that the app will make available to users in the Narrative Studio. The settings saved by the user are available to the app via the SDK.
 - `fields` - The fields that the app will make available to users in the Narrative Studio
-    - `name` - A unique name for the field
-    - `label` - The label of the field as it will appear in the Narrative Studio
-    - `type` - The type of the field. Supported types are `text`, `number`, `boolean`
-    - `description` - The description of the field as it will appear in the Narrative Studio
-    - `required` - Whether the field is required or not
-    - `default` (optional) - The default value of the field
+    - `name` - A unique name for the field.
+    - `label` - The label of the field as it will appear in the Narrative Studio.
+    - `type` - The type of the field. Supported types are `text`, `number`, `boolean`.
+    - `description` - The description of the field as it will appear in the Narrative Studio.
+    - `required` - Whether the field is required or not.
+    - `default` (optional) - The default value of the field.
 
 ### Details Pane
 
 The details pane is a custom view that appears when an entity is clicked on in the Narrative Studio. By default, the details pane is a simple view that displays the name of the entity and allows the user to enter a description. 
-You can customize the details pane by providing a URL to an XML file that describes the elements you want to appear and optionally bind it's data to a read model. The XML file should be hosted on a publicly accessible network location.
+You can customize the details pane by providing a URL to an XML file that describes the elements you want to appear and optionally bind its data to a read model. The XML file should be hosted on a publicly accessible network location.
 
-the following elements are supported in the XML file:
+The following elements are supported in the XML file:
 
 - `detailsPane` - The root element of the XML file
 - 
