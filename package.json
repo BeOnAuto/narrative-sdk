@@ -1,8 +1,9 @@
 {
-  "name": "@narrative-sdk",
-  "version": "1.0.0",
-  "description": "Narrative SDK for event handling and command sending",
+  "name": "narrative-studio-sdk",
+  "version": "0.1.0",
+  "description": "Narrative SDK for building apps on the Narrative Studio",
   "main": "dist/index.js",
+  "keywords": ["narrative", "sdk"],
   "types": "dist/index.d.ts",
   "files": [
     "dist"
@@ -14,12 +15,12 @@
   },
   "author": {
     "name": "Narrative",
-    "url": "http://narrative.tech"
+    "url": "https://narrative.tech"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/narrative-sdk.git"
+    "url": "https://github.com/XSpecs/narrative-sdk.git"
   },
   "devDependencies": {
     "typescript": "^5.3.3"

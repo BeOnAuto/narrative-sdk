@@ -62,11 +62,12 @@ export class Narrative {
   }
 
   /**
-   * Updates the store with the provided data.
-   * @param data - The data to update in the store.
+   * Updates the ReadModel with the provided data.
+   * @param data - The data to update the ReadModel with.
    */
-  updateStore<T>(data: T): void {
+  updateReadModel<T>(data: T): void {
     const payload: StoreUpdatePayload<T> = { type: 'update-store', data };
     this.workerContext.postMessage(payload);
   }
+
 }
