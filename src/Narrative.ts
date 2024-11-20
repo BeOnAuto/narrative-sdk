@@ -14,8 +14,23 @@ type StoreUpdatePayload<T> = {
 export class Narrative {
   private workerContext: Worker;
 
-  constructor(workerContext: Worker) {
-    this.workerContext = workerContext;
+  constructor(workerContext?: Worker) {
+    this.workerContext = workerContext || Narrative.createDefaultWorker();
+  }
+
+  private static createDefaultWorker(): Worker {
+    const workerBlob = new Blob(
+        [
+          `
+        self.addEventListener('message', (event) => {
+          self.postMessage(event.data);
+        });
+        `,
+        ],
+        { type: 'application/javascript' },
+    );
+    const workerURL = URL.createObjectURL(workerBlob);
+    return new Worker(workerURL);
   }
 
   /**
