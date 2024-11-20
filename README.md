@@ -197,9 +197,9 @@ Start by importing and initializing the SDK. This gives you access to event hand
 
 
 ```typescript
-import NarrativeSDK from 'narrative-studio-sdk';
+import {Narrative} from 'narrative-studio-sdk';
 
-const narrative = new NarrativeSDK();
+const narrative = new Narrative();
 ```
 
 ### 2. Send Commands
@@ -208,7 +208,7 @@ Commands are used to perform actions that modify the system’s state. They are 
 
 **Example: Adding a New Entity**
 ```typescript
-import { AddEntityCommand } from 'narrative-studio-sdk/commands';
+import { Narrative, AddEntityCommand } from 'narrative-studio-sdk';
 
 narrative.sendCommand(AddEntityCommand, {
   id: 'task-001',
