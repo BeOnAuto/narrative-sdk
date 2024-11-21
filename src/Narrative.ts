@@ -12,26 +12,9 @@ type StoreUpdatePayload<T> = {
 };
 
 export class Narrative {
-  private workerContext: Worker;
 
-  constructor(workerContext?: Worker) {
-    this.workerContext = workerContext || Narrative.createDefaultWorker();
-  }
 
-  private static createDefaultWorker(): Worker {
-    const workerBlob = new Blob(
-        [
-          `
-        self.addEventListener('message', (event) => {
-          self.postMessage(event.data);
-        });
-        `,
-        ],
-        { type: 'application/javascript' },
-    );
-    const workerURL = URL.createObjectURL(workerBlob);
-    return new Worker(workerURL);
-  }
+
 
   /**
    * Sends a command to be processed, specifying the command class and its parameters.
@@ -47,8 +30,8 @@ export class Narrative {
         commandClass: CommandClass.name,
         params,
       };
-      this.workerContext.postMessage(payload);
-      this.workerContext.addEventListener('message', (event) => {
+      self.postMessage(payload);
+      self.addEventListener('message', (event) => {
         if (event.data.type === 'command-response') {
           event.data.error ? reject(new Error(event.data.error)) : resolve();
         }
@@ -64,8 +47,8 @@ export class Narrative {
   subscribeToEvents<T extends EventBase>(eventClasses: EventConstructor<T>[], handler: (event: T) => void): void {
     eventClasses.forEach((EventClass) => {
       const payload = { type: 'subscribe', event: EventClass.name };
-      this.workerContext.postMessage(payload);
-      this.workerContext.addEventListener('message', (event) => {
+      self.postMessage(payload);
+      self.addEventListener('message', (event) => {
         if (event.data.type === 'event' && eventClasses.some((ec) => ec.name === event.data.event)) {
           const eventClass = eventClasses.find((ec) => ec.name === event.data.event);
           if (eventClass) {
@@ -82,7 +65,7 @@ export class Narrative {
    */
   updateReadModel<T>(data: T): void {
     const payload: StoreUpdatePayload<T> = { type: 'update-store', data };
-    this.workerContext.postMessage(payload);
+    self.postMessage(payload);
   }
 
 }
