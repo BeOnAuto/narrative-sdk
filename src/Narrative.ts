@@ -17,8 +17,6 @@ type StoreUpdatePayload<T> = {
 export class Narrative {
 
 
-
-
   /**
    * Sends a command to be processed, specifying the command class and its parameters.
    * Resolves or rejects based on the command’s result.
@@ -30,7 +28,7 @@ export class Narrative {
     return new Promise((resolve, reject) => {
       const payload = {
         type: 'command',
-        commandClass: CommandClass.name,
+        commandClass: new CommandClass(params).name,
         params,
       };
       self.postMessage(payload);
@@ -52,8 +50,8 @@ export class Narrative {
       const payload = { type: 'subscribe', event: EventClass.type };
       self.postMessage(payload);
       self.addEventListener('message', (event) => {
-        if (event.data.type === 'event' && eventClasses.some((ec) => ec.name === event.data.event)) {
-          const eventClass = eventClasses.find((ec) => ec.name === event.data.event);
+        if (event.data.type === 'event' && eventClasses.some((ec) => ec.type === event.data.event)) {
+          const eventClass = eventClasses.find((ec) => ec.type === event.data.event);
           if (eventClass) {
             handler(event.data.payload);
           }
