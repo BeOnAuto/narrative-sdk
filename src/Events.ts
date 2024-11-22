@@ -19,6 +19,7 @@ export abstract class EventBase {
 }
 
 export class ChangesSavedEvent extends EventBase {
+  protected static readonly eventType = 'ChangesSavedEvent';
   constructor(public readonly changes: EntityChanges) {
     super();
   }

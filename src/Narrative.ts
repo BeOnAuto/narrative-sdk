@@ -4,7 +4,10 @@ import { EventBase } from './Events';
 export interface IParams {}
 
 export type CommandConstructor<T extends CommandBase<IParams>> = new (params: IParams) => T;
-export type EventConstructor<T extends EventBase> = new (...args: any[]) => T;
+export type EventConstructor<T extends EventBase> = {
+  new (...args: any[]): T;
+  readonly type: string;
+};
 
 type StoreUpdatePayload<T> = {
   type: 'update-store';
@@ -46,7 +49,7 @@ export class Narrative {
    */
   subscribeToEvents<T extends EventBase>(eventClasses: EventConstructor<T>[], handler: (event: T) => void): void {
     eventClasses.forEach((EventClass) => {
-      const payload = { type: 'subscribe', event: EventClass.name };
+      const payload = { type: 'subscribe', event: EventClass.type };
       self.postMessage(payload);
       self.addEventListener('message', (event) => {
         if (event.data.type === 'event' && eventClasses.some((ec) => ec.name === event.data.event)) {
