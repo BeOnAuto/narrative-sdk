@@ -1,6 +1,6 @@
 {
   "name": "narrative-studio-sdk",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Narrative SDK for building apps on the Narrative Studio",
   "main": "dist/index.js",
   "keywords": ["narrative", "sdk"],
