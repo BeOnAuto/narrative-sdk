@@ -34,28 +34,6 @@ The App Manifest defines your app, its entities, and settings. It must be hosted
     "website": "https://vendor.com",
     "supportUrl": "https://vendor.com/support"
   },
-  "entities": {
-    "constructs": [
-      {
-        "caption": "Custom Construct",
-        "type": "CustomConstruct",
-        "backgroundColor": "#C6A2D2",
-        "textColor": "#000000",
-        "shape": "rectangle"
-      }
-    ],
-    "assets": [
-      {
-        "caption": "Custom Asset",
-        "type": "CustomType",
-        "icon": "/custom-asset.svg",
-        "dataSource": "custom.dataSource",
-        "detailsPane": {
-          "url": "https://example.com/details-pane.xml"
-        }
-      }
-    ]
-  },
   "settings": {
     "fields": [
       {
@@ -96,21 +74,6 @@ The App Manifest defines your app, its entities, and settings. It must be hosted
   - `name` - Organization’s name. 
   - `website` - Organization’s website URL.
   - `supportUrl` - URL for app support.
-- `entities` Configurable building blocks in Narrative Studio.
-    - `constructs` (optional) - Define new constructs for users.
-        - `caption` - The caption of the construct.
-        - `type` - The type of the construct.
-        - `backgroundColor` - Hex Color code for the background color of the construct.
-        - `textColor` - Hex Color code for the text color.
-        - `shape` - The shape of the construct. Supported shapes are `rectangle` and `square`.
-        - `url` (optional) -  A URL to an XML file that describes the details pane for the asset. The details pane is a custom view that appears when the asset is clicked on in the Narrative Studio.
-    - `assets` (optional) - Define new assets for users. Assets are reusable resources which can be referenced in one or more constructs.
-        - `caption` - The caption of the asset.
-        - `type` - The type of the asset.
-        - `icon` - The URL to the icon of the asset.
-        - `dataSource` - Key to bind the asset to the read model.
-        - `detailsPane` 
-        - `url` (optional) -  A URL to an XML file that describes the details pane for the asset. The details pane is a custom view that appears when the asset is clicked on in the Narrative Studio.
 - `settings` (optional) - The settings that the app will make available to users in the Narrative Studio. The settings saved by the user are available to the app via the SDK.
 - `fields` - The fields that the app will make available to users in the Narrative Studio
     - `name` - A unique name for the field.
@@ -119,73 +82,6 @@ The App Manifest defines your app, its entities, and settings. It must be hosted
     - `description` - The description of the field as it will appear in the Narrative Studio.
     - `required` - Whether the field is required or not.
     - `default` (optional) - The default value of the field.
-
-### Details Pane
-
-The details pane is a custom view that appears when an entity is clicked on in the Narrative Studio. By default, the details pane is a simple view that displays the name of the entity and allows the user to enter a description. 
-You can customize the details pane by providing a URL to an XML file that describes the elements you want to appear and optionally bind its data to a read model. The XML file should be hosted on a publicly accessible network location.
-
-The following elements are supported in the XML file:
-
-- `detailsPane` - The root element of the XML file
-- 
-- `tabs` (optional) - The tabs that will appear in the details pane.
-- `tab` (optional) - A tab that will appear in the details pane.
-    - `label` - The label of the tab.
-    - `icon` (optional) - The icon of the tab.
-- `items` - Items can be under a tab or directly under the `detailsPane`.
-  - `item` - An item that will appear in the details pane.
-      - `label` - The label of the item.
-      - `icon` (optional) - The icon of the item.
-      - `type` - The type of the item. Supported types are `textbox`, `textarea`, `select`.
-      - `value` - The value that you would like the item to be set to. You can bind items to a read model by enclosing the item in double curley brackets, e.g. {{asset.summary}}. You can use the SDK to update items in the read model.
-      - `options` (optional) - for use with the `select` type, the options that will appear in the select dropdown.
-      - `option` - An option of the item.
-          - `value` - The value of the option.
-          - `label` - The label of the option.
-
-
-### Details Pane Example
-
-The following is an example of a details pane XML file that uses tabs:
-
-```xml
-<detailsPane>
-    <tabs>
-        <tab label="Details">
-            <textbox label="Summary" value="{{asset.summary}}" />
-            <textbox label="Type" value="{{asset.type}}" />
-            <textbox label="Priority" value="{{asset.priority}}" icon="{{asset.priorityIcon}}" />
-            <select label="Status" value="{{asset.status}}">
-                <option value="Open">Open</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Closed">Closed</option>
-            </select>
-        </tab>
-        <tab label="Description">
-            <textarea value="{{asset.description}}" />
-        </tab>
-    </tabs>
-</detailsPane>
-
-```
-
-Without tabs:
-
-```xml  
-<detailsPane>
-    <item label="Summary" type="textbox" value="{{asset.summary}}" />
-    <item label="Type" type="textbox" value="{{asset.type}}" />
-    <item label="Priority" type="textbox" value="{{asset.priority}}" icon="{{asset.priorityIcon}}" />
-    <item label="Status" type="select" value="{{asset.status}}">
-        <option value="Open">Open</option>
-        <option value="In Progress">In Progress</option>
-        <option value="Closed">Closed</option>
-    </item>
-    <item label="Description" type="textarea" value="{{asset.description}}" />
-</detailsPane>
-
-```
 
 ## Usage
 
@@ -199,8 +95,122 @@ Start by importing and initializing the SDK. This gives you access to event hand
 ```typescript
 import {Narrative} from 'narrative-studio-sdk';
 
-const narrative = new Narrative();
 ```
+
+### 2. Create Scheme
+
+The createScheme method in the Narrative SDK allows you to define and register a custom Scheme with Narrative Studio. A Scheme represents the structure of your model, consisting of Categories, Assets, Constructs, Scripts, and more.
+
+You can either:
+1.	Hand-craft the Scheme object manually.
+2.	Use the optional SchemeBuilder to construct it programmatically.
+
+Both approaches are supported, but the SchemeBuilder simplifies the process for complex Schemes.
+
+Example: Modeling an E-Commerce System
+```typescript
+import {
+    Narrative,
+    SchemeBuilder,
+    ConstructConfig,
+    PermissionAction,
+} from 'narrative-studio-sdk';
+
+// Define reusable constants for entities
+const ProductEntity = {
+    label: 'Product Entity',
+    type: 'product',
+    description: 'Represents a product in the system.',
+    backgroundColor: '#FFFAE0',
+    textColor: '#000000',
+    shape: ConstructConfig.RECTANGLE,
+};
+
+const OrderEntity = {
+    label: 'Order Entity',
+    type: 'order',
+    description: 'Represents a customer order.',
+    backgroundColor: '#E8F5E9',
+    textColor: '#1B5E20',
+    shape: ConstructConfig.SQUARE,
+};
+
+const UserEntity = {
+    label: 'User Entity',
+    type: 'user',
+    description: 'Represents a user or customer in the system.',
+    backgroundColor: '#E3F2FD',
+    textColor: '#0D47A1',
+    shape: ConstructConfig.RECTANGLE,
+};
+
+// Create a new Scheme using the builder
+const ecommerceScheme = new SchemeBuilder('E-Commerce System')
+    .addCategory('Products')
+    .addAsset({
+        label: 'Product Catalog',
+        type: 'catalog',
+        description: 'The catalog of all available products.',
+        icon: 'https://example.com/catalog-icon.png',
+        dataSource: 'products',
+    })
+    .addConstruct(ProductEntity) // Add Product Entity to the constructs
+    .addScript({
+        label: 'Inventory Workflow',
+        type: 'script',
+        description: 'Manages product inventory updates.',
+        icon: 'https://example.com/script-icon.png',
+        style: {
+            backgroundColor: '#F3E5F5',
+            borderColor: '#AB47BC',
+            borderStyle: 'dotted',
+        },
+        frameGroups: [
+            {
+                label: 'Inventory Updates',
+                permissions: { actions: [PermissionAction.ADD, PermissionAction.REMOVE] },
+                countLimits: { min: 1, max: Infinity },
+                frames: [
+                    {
+                        name: 'Stock Check',
+                        allowedEntities: [ProductEntity], // Reuse Product Entity here
+                        permissions: { actions: [PermissionAction.ADD] },
+                        countLimits: { min: 1, max: 1 },
+                        style: {
+                            backgroundColor: '#FFF9C4',
+                        },
+                    },
+                ],
+            },
+        ],
+        laneGroups: [
+            {
+                permissions: { actions: [PermissionAction.ADD, PermissionAction.REORDER] },
+                countLimits: { min: 1, max: 1 },
+                lanes: [
+                    {
+                        label: 'Product Updates',
+                        icon: 'https://example.com/lane-icon.png',
+                        allowedEntities: [ProductEntity], // Reuse Product Entity here
+                        countLimits: { min: 1, max: 5 },
+                        allowMultipleEntities: true,
+                        permissions: { actions: [PermissionAction.REORDER] },
+                        style: { backgroundColor: '#C8E6C9' },
+                    },
+                ],
+            },
+        ],
+    })
+    .addCategory('Orders')
+    .addConstruct(OrderEntity) // Add Order Entity to the constructs
+    .addCategory('Users')
+    .addConstruct(UserEntity) // Add User Entity to the constructs
+    .build();
+
+// Send the Scheme to Narrative Studio
+Narrative.createScheme(ecommerceScheme);
+```
+
 
 ### 2. Send Commands
 
@@ -210,11 +220,11 @@ Commands are used to perform actions that modify the system’s state. They are 
 ```typescript
 import { Narrative, AddEntityCommand } from 'narrative-studio-sdk';
 
-narrative.sendCommand(AddEntityCommand, {
-  id: 'task-001',
-  type: 'Task',
+const sendCommandResponse = await Narrative.sendCommand(AddEntityCommand, {
+  id: 'order1',
+  type: 'order',
   position: { x: 200, y: 150 },
-  name: 'New Task',
+  name: 'Order #1',
 });
 ```
 
@@ -224,7 +234,7 @@ Events inform your app of changes or interactions occurring within the Narrative
 
 **Example: Listening for Changes**
 ```typescript
-narrative.subscribeToEvents([ChangesSavedEvent], (event: ChangesSavedEvent) => {
+Narrative.subscribeToEvents([ChangesSavedEvent], (event: ChangesSavedEvent) => {
     console.log('Changes detected:', event.changes);
 });
 ```
@@ -237,7 +247,7 @@ You can use the updateReadModel method to add, update, or delete entities in you
 
 **Example: Updating the Read Model Based on Events**
 ```typescript
-narrative.subscribeToEvents([ChangesSavedEvent], (event: ChangesSavedEvent) => {
+Narrative.subscribeToEvents([ChangesSavedEvent], (event: ChangesSavedEvent) => {
     // Handle added entities
     event.changes.added
         .filter((entity) => entity.type === 'CustomType') // Filter by type
@@ -284,7 +294,7 @@ To create a seamless user experience, you can integrate Narrative SDK with your 
 
 **Example: Sending Custom Entity Changes to Your Backend**
 ```typescript
-narrative.subscribeToEvents([ChangesSavedEvent], async (event: ChangesSavedEvent) => {
+Narrative.subscribeToEvents([ChangesSavedEvent], async (event: ChangesSavedEvent) => {
   const customAddedEntities = event.changes.added.filter(
     (entity) => entity.type === 'CustomType'
   );

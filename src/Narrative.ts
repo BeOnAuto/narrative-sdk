@@ -1,5 +1,6 @@
 import { CommandBase } from './Commands';
 import { EventBase } from './Events';
+import {Scheme} from "./scheme";
 
 export interface IParams {}
 
@@ -16,6 +17,13 @@ type StoreUpdatePayload<T> = {
 
 export class Narrative {
 
+  /**
+   * Creates a new scheme.
+   * @param scheme - The scheme to create.
+   */
+  static createScheme(scheme: Scheme): void {
+    self.postMessage({ type: 'create-scheme', scheme });
+  }
 
   /**
    * Sends a command to be processed, specifying the command class and its parameters.
@@ -24,7 +32,7 @@ export class Narrative {
    * @param params - Parameters required by the command.
    * @returns Promise<void | Error> - Resolves on successful command execution, returns the error on failure.
    */
-  sendCommand<T extends IParams>(CommandClass: CommandConstructor<CommandBase<T>>, params: T): Promise<void | Error> {
+  static sendCommand<T extends IParams>(CommandClass: CommandConstructor<CommandBase<T>>, params: T): Promise<void | Error> {
     return new Promise((resolve, reject) => {
       const payload = {
         type: 'command',
@@ -45,7 +53,7 @@ export class Narrative {
    * @param eventClasses - An array of event constructors to subscribe to.
    * @param handler - A function to handle the incoming events.
    */
-  subscribeToEvents<T extends EventBase>(eventClasses: EventConstructor<T>[], handler: (event: T) => void): void {
+  static subscribeToEvents<T extends EventBase>(eventClasses: EventConstructor<T>[], handler: (event: T) => void): void {
     eventClasses.forEach((EventClass) => {
       const payload = { type: 'subscribe', event: EventClass.type };
       self.postMessage(payload);
@@ -64,7 +72,7 @@ export class Narrative {
    * Updates the ReadModel with the provided data.
    * @param data - The data to update the ReadModel with.
    */
-  updateReadModel<T>(data: T): void {
+  static updateReadModel<T>(data: T): void {
     const payload: StoreUpdatePayload<T> = { type: 'update-store', data };
     self.postMessage(payload);
   }
