@@ -15,14 +15,44 @@ type StoreUpdatePayload<T> = {
   data: T;
 };
 
+interface MessageHandler {
+  postMessage: (message: any) => void;
+  addMessageListener: (listener: (event: MessageEvent) => void) => void;
+}
+
+class WorkerMessageHandler implements MessageHandler {
+  postMessage(message: any): void {
+    self.postMessage(message);
+  }
+
+  addMessageListener(listener: (event: MessageEvent) => void): void {
+    self.addEventListener('message', listener);
+  }
+}
+
 export class Narrative {
+
+  private static messageHandler: MessageHandler = new WorkerMessageHandler();
+
+  /** @internal */
+  static _setMessageHandler(handler: MessageHandler): void {
+    this.messageHandler = handler;
+  }
 
   /**
    * Creates a new scheme.
    * @param scheme - The scheme to create.
+   * @returns Promise<void | Error> - Resolves on successful scheme creation, returns the error on failure.
    */
-  static createScheme(scheme: Scheme): void {
-    self.postMessage({ type: 'create-scheme', scheme });
+  static createScheme(scheme: Scheme): Promise<void | Error> {
+    return new Promise((resolve, reject) => {
+      this.messageHandler.postMessage({ type: 'create-scheme', scheme });
+      this.messageHandler.addMessageListener((event) => {
+        if (event.data.type === 'command-response') {
+          event.data.error ? reject(new Error(event.data.error)) : resolve();
+        }
+      });
+    });
   }
 
   /**
@@ -39,8 +69,8 @@ export class Narrative {
         commandClass: new CommandClass(params).name,
         params,
       };
-      self.postMessage(payload);
-      self.addEventListener('message', (event) => {
+      this.messageHandler.postMessage(payload);
+      this.messageHandler.addMessageListener((event) => {
         if (event.data.type === 'command-response') {
           event.data.error ? reject(new Error(event.data.error)) : resolve();
         }
@@ -56,8 +86,8 @@ export class Narrative {
   static subscribeToEvents<T extends EventBase>(eventClasses: EventConstructor<T>[], handler: (event: T) => void): void {
     eventClasses.forEach((EventClass) => {
       const payload = { type: 'subscribe', event: EventClass.type };
-      self.postMessage(payload);
-      self.addEventListener('message', (event) => {
+      this.messageHandler.postMessage(payload);
+      this.messageHandler.addMessageListener((event) => {
         if (event.data.type === 'event' && eventClasses.some((ec) => ec.type === event.data.event)) {
           const eventClass = eventClasses.find((ec) => ec.type === event.data.event);
           if (eventClass) {
@@ -74,7 +104,6 @@ export class Narrative {
    */
   static updateReadModel<T>(data: T): void {
     const payload: StoreUpdatePayload<T> = { type: 'update-store', data };
-    self.postMessage(payload);
+    this.messageHandler.postMessage(payload);
   }
-
 }

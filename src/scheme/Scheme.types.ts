@@ -6,7 +6,7 @@ export enum PermissionAction {
     ALL = ADD | REMOVE | REORDER,
 }
 
-export enum ConstructConfig {
+export enum ConstructShape {
     RECTANGLE = 'rectangle',
     SQUARE = 'square',
 }
@@ -25,7 +25,7 @@ export type Styled = {
     style?: Partial<StyleConfig>;
 };
 
-export type LimitsConfig = {
+export type Limits = {
     min: number;
     max: number | typeof Infinity;
 };
@@ -48,7 +48,7 @@ export type Construct = {
     description: string;
     backgroundColor: string;
     textColor: string;
-    shape: ConstructConfig;
+    shape: ConstructShape;
 }
 
 export type Asset = {
@@ -76,13 +76,13 @@ export type Frame = Styled & {
     name: string;
     allowedEntities: Entity[];
     permissions?: PermissionConfig;
-    countLimits: LimitsConfig;
+    countLimits: Limits;
 };
 
 export type FrameGroup = Styled & {
     label: string;
     permissions?: PermissionConfig;
-    countLimits: LimitsConfig;
+    countLimits: Limits;
     frames: Frame[];
 };
 
@@ -90,13 +90,13 @@ export type Lane = Styled & {
     label: string;
     icon: string;
     allowedEntities: Entity[];
-    countLimits: LimitsConfig;
+    countLimits: Limits;
     allowMultipleEntities?: boolean;
     permissions: PermissionConfig;
 };
 
 export type LaneGroup = {
     permissions?: PermissionConfig;
-    countLimits: LimitsConfig;
+    countLimits: Limits;
     lanes: Lane[];
 };

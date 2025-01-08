@@ -1,8 +1,8 @@
-import {ConstructConfig, PermissionAction, SchemeBuilder} from "../../scheme/";
+import {ConstructShape, PermissionAction, SchemeBuilder} from "../../scheme/";
 
 describe('SchemeBuilder', () => {
     it('should build a valid scheme for event modeling', () => {
-        const builder = new SchemeBuilder('Scheme Test');
+        const builder = SchemeBuilder.create('Scheme Test');
         let asset = {
             label: 'Asset test',
             type: 'AssetTest',
@@ -64,7 +64,7 @@ describe('SchemeBuilder', () => {
                 description: 'Represents a test Command.',
                 backgroundColor: 'white',
                 textColor: 'black',
-                shape: ConstructConfig.RECTANGLE,
+                shape: ConstructShape.RECTANGLE,
             })
             .build();
 

@@ -112,7 +112,7 @@ Example: Modeling an E-Commerce System
 import {
     Narrative,
     SchemeBuilder,
-    ConstructConfig,
+    ConstructShape,
     PermissionAction,
 } from 'narrative-studio-sdk';
 
@@ -123,7 +123,7 @@ const ProductEntity = {
     description: 'Represents a product in the system.',
     backgroundColor: '#FFFAE0',
     textColor: '#000000',
-    shape: ConstructConfig.RECTANGLE,
+    shape: ConstructShape.RECTANGLE,
 };
 
 const OrderEntity = {
@@ -132,7 +132,7 @@ const OrderEntity = {
     description: 'Represents a customer order.',
     backgroundColor: '#E8F5E9',
     textColor: '#1B5E20',
-    shape: ConstructConfig.SQUARE,
+    shape: ConstructShape.SQUARE,
 };
 
 const UserEntity = {
@@ -141,7 +141,7 @@ const UserEntity = {
     description: 'Represents a user or customer in the system.',
     backgroundColor: '#E3F2FD',
     textColor: '#0D47A1',
-    shape: ConstructConfig.RECTANGLE,
+    shape: ConstructShape.RECTANGLE,
 };
 
 // Create a new Scheme using the builder
