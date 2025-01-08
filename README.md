@@ -144,8 +144,8 @@ const UserEntity = {
     shape: ConstructShape.RECTANGLE,
 };
 
-// Create a new Scheme using the builder
-const ecommerceScheme = new SchemeBuilder('E-Commerce System')
+// Create a Scheme using the builder
+const ecommerceScheme = SchemeBuilder.create('E-Commerce System')
     .addCategory('Products')
     .addAsset({
         label: 'Product Catalog',
@@ -208,7 +208,7 @@ const ecommerceScheme = new SchemeBuilder('E-Commerce System')
     .build();
 
 // Send the Scheme to Narrative Studio
-Narrative.createScheme(ecommerceScheme);
+const response = await Narrative.createScheme(ecommerceScheme);
 ```
 
 
