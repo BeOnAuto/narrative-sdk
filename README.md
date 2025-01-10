@@ -110,102 +110,94 @@ Both approaches are supported, but the SchemeBuilder simplifies the process for 
 Example: Modeling an E-Commerce System
 ```typescript
 import {
-    Narrative,
-    SchemeBuilder,
-    ConstructShape,
-    PermissionAction,
+  SchemeBuilder,
+  ConstructShape,
+  PermissionAction,
+  Narrative,
 } from 'narrative-studio-sdk';
 
-// Define reusable constants for entities
+// Define entities
 const ProductEntity = {
-    label: 'Product Entity',
-    type: 'product',
-    description: 'Represents a product in the system.',
-    backgroundColor: '#FFFAE0',
-    textColor: '#000000',
-    shape: ConstructShape.RECTANGLE,
+  label: 'Product Entity',
+  type: 'product',
+  description: 'Represents a product in the system.',
+  backgroundColor: '#FFFAE0',
+  textColor: '#000000',
+  shape: ConstructShape.RECTANGLE,
 };
 
 const OrderEntity = {
-    label: 'Order Entity',
-    type: 'order',
-    description: 'Represents a customer order.',
-    backgroundColor: '#E8F5E9',
-    textColor: '#1B5E20',
-    shape: ConstructShape.SQUARE,
+  label: 'Order Entity',
+  type: 'order',
+  description: 'Represents a customer order.',
+  backgroundColor: '#E8F5E9',
+  textColor: '#1B5E20',
+  shape: ConstructShape.SQUARE,
 };
 
 const UserEntity = {
-    label: 'User Entity',
-    type: 'user',
-    description: 'Represents a user or customer in the system.',
-    backgroundColor: '#E3F2FD',
-    textColor: '#0D47A1',
-    shape: ConstructShape.RECTANGLE,
+  label: 'User Entity',
+  type: 'user',
+  description: 'Represents a user or customer in the system.',
+  backgroundColor: '#E3F2FD',
+  textColor: '#0D47A1',
+  shape: ConstructShape.RECTANGLE,
 };
 
 // Create a Scheme using the builder
 const ecommerceScheme = SchemeBuilder.create('E-Commerce System')
-    .addCategory('Products')
-    .addAsset({
-        label: 'Product Catalog',
-        type: 'catalog',
-        description: 'The catalog of all available products.',
-        icon: 'https://example.com/catalog-icon.png',
-        dataSource: 'products',
-    })
-    .addConstruct(ProductEntity) // Add Product Entity to the constructs
-    .addScript({
-        label: 'Inventory Workflow',
-        type: 'script',
-        description: 'Manages product inventory updates.',
-        icon: 'https://example.com/script-icon.png',
-        style: {
+        .addCategory('Products')
+        .addAsset({
+          label: 'Product Catalog',
+          type: 'catalog',
+          description: 'The catalog of all available products.',
+          icon: 'https://example.com/catalog-icon.png',
+          dataSource: 'products',
+        })
+        .addConstruct(ProductEntity) // Add Product Entity to the constructs
+        .addScript({
+          label: 'Inventory Workflow',
+          type: 'script',
+          description: 'Manages product inventory updates.',
+          icon: 'https://example.com/script-icon.png',
+          style: {
             backgroundColor: '#F3E5F5',
             borderColor: '#AB47BC',
             borderStyle: 'dotted',
-        },
-        frameGroups: [
-            {
-                label: 'Inventory Updates',
-                permissions: { actions: [PermissionAction.ADD, PermissionAction.REMOVE] },
-                countLimits: { min: 1, max: Infinity },
-                frames: [
-                    {
-                        name: 'Stock Check',
-                        allowedEntities: [ProductEntity], // Reuse Product Entity here
-                        permissions: { actions: [PermissionAction.ADD] },
-                        countLimits: { min: 1, max: 1 },
-                        style: {
-                            backgroundColor: '#FFF9C4',
-                        },
-                    },
-                ],
-            },
-        ],
-        laneGroups: [
-            {
-                permissions: { actions: [PermissionAction.ADD, PermissionAction.REORDER] },
-                countLimits: { min: 1, max: 1 },
-                lanes: [
-                    {
-                        label: 'Product Updates',
-                        icon: 'https://example.com/lane-icon.png',
-                        allowedEntities: [ProductEntity], // Reuse Product Entity here
-                        countLimits: { min: 1, max: 5 },
-                        allowMultipleEntities: true,
-                        permissions: { actions: [PermissionAction.REORDER] },
-                        style: { backgroundColor: '#C8E6C9' },
-                    },
-                ],
-            },
-        ],
-    })
-    .addCategory('Orders')
-    .addConstruct(OrderEntity) // Add Order Entity to the constructs
-    .addCategory('Users')
-    .addConstruct(UserEntity) // Add User Entity to the constructs
-    .build();
+          },
+        })
+        .addFrameGroup({
+          label: 'Inventory Updates',
+          permissions: { actions: [PermissionAction.ADD, PermissionAction.REMOVE] },
+          countLimits: { min: 1, max: Infinity },
+        })
+        .addFrame({
+          name: 'Stock Check',
+          allowedEntities: [ProductEntity], // Reuse Product Entity here
+          permissions: { actions: [PermissionAction.ADD] },
+          countLimits: { min: 1, max: 1 },
+          style: {
+            backgroundColor: '#FFF9C4',
+          },
+        })
+        .addLaneGroup({
+          permissions: { actions: [PermissionAction.ADD, PermissionAction.REORDER] },
+          countLimits: { min: 1, max: 1 },
+        })
+        .addLane({
+          label: 'Product Updates',
+          icon: 'https://example.com/lane-icon.png',
+          allowedEntities: [ProductEntity], // Reuse Product Entity here
+          countLimits: { min: 1, max: 5 },
+          allowMultipleEntities: true,
+          permissions: { actions: [PermissionAction.REORDER] },
+          style: { backgroundColor: '#C8E6C9' },
+        })
+        .addCategory('Orders')
+        .addConstruct(OrderEntity) // Add Order Entity to the constructs
+        .addCategory('Users')
+        .addConstruct(UserEntity) // Add User Entity to the constructs
+        .build();
 
 // Send the Scheme to Narrative Studio
 const response = await Narrative.createScheme(ecommerceScheme);

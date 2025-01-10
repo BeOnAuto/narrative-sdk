@@ -1,82 +1,126 @@
-import {ConstructShape, PermissionAction, SchemeBuilder} from "../../scheme/";
+import { ConstructShape, PermissionAction, SchemeBuilder } from '../../scheme/';
 
 describe('SchemeBuilder', () => {
-    it('should build a valid scheme for event modeling', () => {
-        const builder = SchemeBuilder.create('Scheme Test');
-        let asset = {
+    let asset: any;
+
+    beforeEach(() => {
+        asset = {
             label: 'Asset test',
             type: 'AssetTest',
-            description: 'Represents an test asset.',
+            description: 'Represents a test asset.',
             icon: 'trigger-icon.png',
             dataSource: 'asset-source',
         };
-        const scheme = builder
-            .addCategory('first category')
-            .addAsset(asset)
-            .addScript({
-                label: 'Script Tests',
-                type: 'ScriptTest',
-                description: 'Represents a test script.',
-                icon: 'script-icon.png',
-                style: {
-                    backgroundColor: 'lightblue',
-                    borderColor: 'blue',
-                    borderStyle: 'solid',
-                },
-                frameGroups: [
-                    {
-                        label: 'Frame Group1',
-                        permissions: { actions: [PermissionAction.ADD, PermissionAction.REORDER] },
-                        countLimits: { min: 0, max: Infinity },
-                        frames: [
-                            {
-                                name: 'FrameGroup1',
-                                allowedEntities: [],
-                                permissions: { actions: [PermissionAction.ADD] },
-                                countLimits: { min: 0, max: Infinity },
-                                style: { backgroundColor: 'yellow' },
-                            },
-                        ],
-                    },
-                ],
-                laneGroups: [
-                    {
-                        permissions: { actions: [PermissionAction.ADD, PermissionAction.REMOVE] },
-                        countLimits: { min: 1, max: 3 },
-                        lanes: [
-                            {
-                                label: 'Lane 1',
-                                icon: 'lane-icon.png',
-                                allowedEntities: [asset, 'AssetTest2'],
-                                countLimits: { min: 0, max: 2 },
-                                allowMultipleEntities: true,
-                                permissions: { actions: [ PermissionAction.ALL] },
-                                style: { backgroundColor: 'lightgreen' },
-                            },
-                        ],
-                    },
-                ],
-            })
-            .addCategory('Commands')
-            .addConstruct({
-                label: 'Command Construct',
-                type: 'commandTest',
-                description: 'Represents a test Command.',
-                backgroundColor: 'white',
-                textColor: 'black',
-                shape: ConstructShape.RECTANGLE,
-            })
-            .build();
+    });
 
-        expect(scheme.name).toBe('Scheme Test');
-        expect(scheme.categories).toHaveLength(2);
+    const createBuilderWithCategory = (categoryName: string) =>
+        SchemeBuilder.create('Scheme Test').addCategory(categoryName);
 
-        const triggersCategory = scheme.categories[0];
-        expect(triggersCategory.name).toBe('first category');
-        expect(triggersCategory.assets).toHaveLength(1);
-        expect(triggersCategory.scripts).toHaveLength(1);
-        const commandsCategory = scheme.categories[1];
-        expect(commandsCategory.name).toBe('Commands');
-        expect(commandsCategory.constructs).toHaveLength(1);
+    const createBuilderWithScript = () =>
+        createBuilderWithCategory('first category').addScript({
+            label: 'Script Test',
+            type: 'ScriptTest',
+            description: 'Represents a test script.',
+            icon: 'script-icon.png',
+            style: {
+                backgroundColor: 'lightblue',
+                borderColor: 'blue',
+                borderStyle: 'solid',
+            },
+        });
+
+    describe('Category Management', () => {
+        it('should create a scheme with multiple categories', () => {
+            const scheme = createBuilderWithCategory('first category')
+                .addCategory('second category')
+                .build();
+
+            expect(scheme.name).toBe('Scheme Test');
+            expect(scheme.categories).toHaveLength(2);
+            expect(scheme.categories[0].name).toBe('first category');
+            expect(scheme.categories[1].name).toBe('second category');
+        });
+
+        it('should allow adding assets to a category', () => {
+            const scheme = createBuilderWithCategory('first category').addAsset(asset).build();
+
+            const triggersCategory = scheme.categories[0];
+            expect(triggersCategory.assets).toHaveLength(1);
+            expect(triggersCategory.assets[0].label).toBe('Asset test');
+        });
+    });
+
+    describe('Script and Related Elements', () => {
+        it('should allow adding a script with frame groups and lanes', () => {
+            const scheme = createBuilderWithScript()
+                .addFrameGroup({
+                    label: 'Frame Group 1',
+                    permissions: { actions: [PermissionAction.ADD, PermissionAction.REORDER] },
+                    countLimits: { min: 0, max: Infinity },
+                    frames: [
+                        {
+                            name: 'Frame 1',
+                            allowedEntities: [],
+                            permissions: { actions: [PermissionAction.ADD] },
+                            countLimits: { min: 0, max: Infinity },
+                            style: { backgroundColor: 'yellow' },
+                        },
+                    ],
+                })
+                .addLaneGroup({
+                    permissions: { actions: [PermissionAction.ADD, PermissionAction.REMOVE] },
+                    countLimits: { min: 1, max: 3 },
+                })
+                .addLane({
+                    label: 'Lane 1',
+                    icon: 'lane-icon.png',
+                    allowedEntities: [asset, 'AssetTest2'],
+                    countLimits: { min: 0, max: 2 },
+                    allowMultipleEntities: true,
+                    permissions: { actions: [PermissionAction.ALL] },
+                    style: { backgroundColor: 'lightgreen' },
+                })
+                .build();
+
+            const triggersCategory = scheme.categories[0];
+            expect(triggersCategory.scripts).toHaveLength(1);
+
+            const script = triggersCategory.scripts[0];
+            expect(script.label).toBe('Script Test');
+            expect(script.frameGroups).toHaveLength(1);
+            expect(script.laneGroups).toHaveLength(1);
+
+            const frameGroup = script.frameGroups?.[0] ?? fail('frameGroups is undefined or empty');
+            expect(frameGroup.frames).toHaveLength(1);
+            expect(frameGroup.frames[0].name).toBe('Frame 1');
+
+            const laneGroup = script.laneGroups?.[0] ?? fail('laneGroups is undefined or empty');
+            expect(laneGroup.lanes).toHaveLength(1);
+            const lane = laneGroup.lanes?.[0] ?? fail('lanes is undefined or empty');
+            expect(lane.label).toBe('Lane 1');
+            expect(lane.icon).toBe('lane-icon.png');
+            expect(lane.allowedEntities).toContain('AssetTest2');
+        });
+    });
+
+    describe('Validation for Constructs', () => {
+        it('should allow adding constructs to a category', () => {
+            const scheme = createBuilderWithCategory('Commands')
+                .addConstruct({
+                    label: 'Command Construct',
+                    type: 'commandTest',
+                    description: 'Represents a test Command.',
+                    backgroundColor: 'white',
+                    textColor: 'black',
+                    shape: ConstructShape.RECTANGLE,
+                })
+                .build();
+
+            const commandsCategory = scheme.categories[0];
+            expect(commandsCategory.constructs).toHaveLength(1);
+            const construct = commandsCategory.constructs[0];
+            expect(construct.label).toBe('Command Construct');
+            expect(construct.type).toBe('commandTest');
+        });
     });
 });

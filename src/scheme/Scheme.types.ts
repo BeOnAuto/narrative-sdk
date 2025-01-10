@@ -64,8 +64,8 @@ export type Script = Styled & {
     type: string;
     description: string;
     icon: string;
-    frameGroups: FrameGroup[];
-    laneGroups: LaneGroup[];
+    frameGroups?: FrameGroup[];
+    laneGroups?: LaneGroup[];
 };
 
 export type EntityType = string;
@@ -98,5 +98,5 @@ export type Lane = Styled & {
 export type LaneGroup = {
     permissions?: PermissionConfig;
     countLimits: Limits;
-    lanes: Lane[];
+    lanes?: Lane[];
 };

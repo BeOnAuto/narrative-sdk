@@ -1,4 +1,4 @@
-import { Asset, Category, Construct, Scheme, Script } from "./Scheme.types";
+import { Asset, Category, Construct, Frame, FrameGroup, Lane, LaneGroup, Scheme, Script } from "./Scheme.types";
 
 interface SchemeBuilderStart {
     addCategory(name: string): SchemeBuilderCategory;
@@ -7,102 +7,159 @@ interface SchemeBuilderStart {
 interface SchemeBuilderCategory {
     addAsset(asset: Asset): SchemeBuilderCategory;
     addConstruct(construct: Construct): SchemeBuilderCategory;
-    addScript(script: Script): SchemeBuilderCategory;
+    addScript(script: Script): SchemeBuilderScriptStart;
     addCategory(name: string): SchemeBuilderCategory;
     build(): Scheme;
 }
 
-export class SchemeBuilder implements SchemeBuilderStart, SchemeBuilderCategory {
+interface SchemeBuilderScriptStart {
+    addFrameGroup(frameGroup: FrameGroup): SchemeBuilderScriptFrameGroup;
+    addLaneGroup(laneGroup: LaneGroup): SchemeBuilderScriptLaneGroup;
+    addCategory(name: string): SchemeBuilderCategory;
+    build(): Scheme;
+}
+
+interface SchemeBuilderScriptFrameGroup {
+    addFrame(frame: Frame): SchemeBuilderScriptFrameGroup;
+    addFrameGroup(frameGroup: FrameGroup): SchemeBuilderScriptFrameGroup;
+    addLaneGroup(laneGroup: LaneGroup): SchemeBuilderScriptLaneGroup;
+    addCategory(name: string): SchemeBuilderCategory;
+    build(): Scheme;
+}
+
+interface SchemeBuilderScriptLaneGroup {
+    addLane(lane: Lane): SchemeBuilderScriptLaneGroup;
+    addLaneGroup(laneGroup: LaneGroup): SchemeBuilderScriptLaneGroup;
+    addFrameGroup(frameGroup: FrameGroup): SchemeBuilderScriptFrameGroup;
+    addCategory(name: string): SchemeBuilderCategory;
+    build(): Scheme;
+}
+
+export class SchemeBuilder
+    implements
+        SchemeBuilderStart,
+        SchemeBuilderCategory,
+        SchemeBuilderScriptStart,
+        SchemeBuilderScriptFrameGroup,
+        SchemeBuilderScriptLaneGroup
+{
     private readonly scheme: Scheme;
     private currentCategory?: Category;
+    private currentScript?: Script;
+    private currentFrameGroup?: FrameGroup;
+    private currentLaneGroup?: LaneGroup;
 
     private constructor(name: string) {
         this.scheme = { name, categories: [] };
     }
 
-    /**
-     * Factory method to create a new SchemeBuilder.
-     * Ensures the builder starts in the correct stage.
-     */
     static create(name: string): SchemeBuilderStart {
         return new SchemeBuilder(name);
     }
 
-    /**
-     * Adds a category to the scheme
-     * @param name - The name of the category to add.
-     */
     addCategory(name: string): SchemeBuilderCategory {
-        if (this.currentCategory) {
-            this.finalizeCategory();
-        }
-
+        this.finalizePendingItems();
         this.currentCategory = {
             name,
             assets: [],
             constructs: [],
             scripts: [],
         };
-
         return this;
     }
 
-    /**
-     * Adds an asset to the current category.
-     * @param asset - The asset to add.
-     */
     addAsset(asset: Asset): SchemeBuilderCategory {
         this.ensureCategoryExists();
         this.currentCategory!.assets.push(asset);
         return this;
     }
 
-    /**
-     * Adds a construct to the current category.
-     * @param construct - The construct to add.
-     */
     addConstruct(construct: Construct): SchemeBuilderCategory {
         this.ensureCategoryExists();
         this.currentCategory!.constructs.push(construct);
         return this;
     }
 
-    /**
-     * Adds a script to the current category.
-     * @param script - The script to add.
-     */
-    addScript(script: Script): SchemeBuilderCategory {
+    addScript(script: Script): SchemeBuilderScriptStart {
         this.ensureCategoryExists();
-        this.currentCategory!.scripts.push(script);
+        this.currentScript = { ...script, frameGroups: [], laneGroups: [] };
+        this.currentCategory!.scripts.push(this.currentScript);
         return this;
     }
 
-    /**
-     * Finalizes and adds the current category to the scheme.
-     */
-    private finalizeCategory(): void {
+    addFrameGroup(frameGroup: FrameGroup): SchemeBuilderScriptFrameGroup {
+        this.ensureScriptExists();
+        this.currentFrameGroup = { ...frameGroup, frames: [] };
+        if(this.currentScript!.frameGroups === undefined) {
+            this.currentScript!.frameGroups = [];
+        }
+        this.currentScript!.frameGroups.push(this.currentFrameGroup);
+        this.currentLaneGroup = undefined; // Disallow adding lanes in this context
+        return this;
+    }
+
+    addFrame(frame: Frame): SchemeBuilderScriptFrameGroup {
+        this.ensureFrameGroupExists();
+        this.currentFrameGroup!.frames.push(frame);
+        return this;
+    }
+
+    addLaneGroup(laneGroup: LaneGroup): SchemeBuilderScriptLaneGroup {
+        this.ensureScriptExists();
+        this.currentLaneGroup = { ...laneGroup, lanes: [] };
+        if(this.currentScript!.laneGroups === undefined) {
+            this.currentScript!.laneGroups = [];
+        }
+        this.currentScript!.laneGroups.push(this.currentLaneGroup);
+        this.currentFrameGroup = undefined; // Disallow adding frames in this context
+        return this;
+    }
+
+    addLane(lane: Lane): SchemeBuilderScriptLaneGroup {
+        this.ensureLaneGroupExists();
+        if(!this.currentLaneGroup!.lanes) {
+            this.currentLaneGroup!.lanes = [];
+        }
+        this.currentLaneGroup!.lanes.push(lane);
+        return this;
+    }
+
+    private finalizePendingItems(): void {
         if (this.currentCategory) {
             this.scheme.categories.push(this.currentCategory);
             this.currentCategory = undefined;
         }
+        this.currentScript = undefined;
+        this.currentFrameGroup = undefined;
+        this.currentLaneGroup = undefined;
     }
 
-    /**
-     * Ensures a category exists before adding elements to it.
-     */
     private ensureCategoryExists(): void {
         if (!this.currentCategory) {
             throw new Error("Cannot add elements without a category. Call addCategory() first.");
         }
     }
 
-    /**
-     * Finalizes any pending category and builds the scheme.
-     */
-    build(): Scheme {
-        if (this.currentCategory) {
-            this.finalizeCategory();
+    private ensureScriptExists(): void {
+        if (!this.currentScript) {
+            throw new Error("Cannot add elements without a script. Call addScript() first.");
         }
+    }
+
+    private ensureFrameGroupExists(): void {
+        if (!this.currentFrameGroup) {
+            throw new Error("Cannot add frames without a frame group. Call addFrameGroup() first.");
+        }
+    }
+
+    private ensureLaneGroupExists(): void {
+        if (!this.currentLaneGroup) {
+            throw new Error("Cannot add lanes without a lane group. Call addLaneGroup() first.");
+        }
+    }
+
+    build(): Scheme {
+        this.finalizePendingItems();
         return this.scheme;
     }
 }
