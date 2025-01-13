@@ -174,8 +174,6 @@ const ecommerceScheme = SchemeBuilder.create('E-Commerce System')
         .addFrame({
           name: 'Stock Check',
           allowedEntities: [ProductEntity], // Reuse Product Entity here
-          permissions: { actions: [PermissionAction.ADD] },
-          countLimits: { min: 1, max: 1 },
           style: {
             backgroundColor: '#FFF9C4',
           },
@@ -188,9 +186,7 @@ const ecommerceScheme = SchemeBuilder.create('E-Commerce System')
           label: 'Product Updates',
           icon: 'https://example.com/lane-icon.png',
           allowedEntities: [ProductEntity], // Reuse Product Entity here
-          countLimits: { min: 1, max: 5 },
-          allowMultipleEntities: true,
-          permissions: { actions: [PermissionAction.REORDER] },
+          entityLimits: { min: 1, max: 1 },
           style: { backgroundColor: '#C8E6C9' },
         })
         .addCategory('Orders')

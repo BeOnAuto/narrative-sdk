@@ -100,6 +100,9 @@ export class SchemeBuilder
 
     addFrame(frame: Frame): SchemeBuilderScriptFrameGroup {
         this.ensureFrameGroupExists();
+        if(!this.currentFrameGroup!.frames) {
+            this.currentFrameGroup!.frames = [];
+        }
         this.currentFrameGroup!.frames.push(frame);
         return this;
     }

@@ -59,10 +59,8 @@ describe('SchemeBuilder', () => {
                     countLimits: { min: 0, max: Infinity },
                     frames: [
                         {
-                            name: 'Frame 1',
+                            label: 'Frame 1',
                             allowedEntities: [],
-                            permissions: { actions: [PermissionAction.ADD] },
-                            countLimits: { min: 0, max: Infinity },
                             style: { backgroundColor: 'yellow' },
                         },
                     ],
@@ -75,9 +73,7 @@ describe('SchemeBuilder', () => {
                     label: 'Lane 1',
                     icon: 'lane-icon.png',
                     allowedEntities: [asset, 'AssetTest2'],
-                    countLimits: { min: 0, max: 2 },
-                    allowMultipleEntities: true,
-                    permissions: { actions: [PermissionAction.ALL] },
+                    entityLimits: { min: 0, max: 2 },
                     style: { backgroundColor: 'lightgreen' },
                 })
                 .build();
@@ -92,7 +88,7 @@ describe('SchemeBuilder', () => {
 
             const frameGroup = script.frameGroups?.[0] ?? fail('frameGroups is undefined or empty');
             expect(frameGroup.frames).toHaveLength(1);
-            expect(frameGroup.frames[0].name).toBe('Frame 1');
+            expect(frameGroup.frames?.[0].label).toBe('Frame 1');
 
             const laneGroup = script.laneGroups?.[0] ?? fail('laneGroups is undefined or empty');
             expect(laneGroup.lanes).toHaveLength(1);

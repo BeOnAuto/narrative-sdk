@@ -73,26 +73,26 @@ export type EntityType = string;
 export type Entity = Asset | Construct | Script | EntityType;
 
 export type Frame = Styled & {
-    name: string;
-    allowedEntities: Entity[];
-    permissions?: PermissionConfig;
-    countLimits: Limits;
+    label?: string;
+    allowedEntities?: Entity[];
+    //permissions?: PermissionConfig;
+    //laneLimits: Limits;
 };
 
 export type FrameGroup = Styled & {
-    label: string;
+    label?: string;
     permissions?: PermissionConfig;
     countLimits: Limits;
-    frames: Frame[];
+    frames?: Frame[];
 };
 
 export type Lane = Styled & {
-    label: string;
-    icon: string;
+    label?: string;
+    icon?: string;
     allowedEntities: Entity[];
-    countLimits: Limits;
-    allowMultipleEntities?: boolean;
-    permissions: PermissionConfig;
+    entityLimits: Limits;
+    //allowMultipleEntities?: boolean;
+    //permissions: PermissionConfig;
 };
 
 export type LaneGroup = {
