@@ -173,7 +173,7 @@ const ecommerceScheme = SchemeBuilder.create('E-Commerce System')
           frameLimits: { min: 1, max: Infinity },
         })
         .addFrame({
-          name: 'Stock Check',
+          label: 'Stock Check',
           allowedEntities: [ProductEntity], // Reuse Product Entity here
           style: {
             backgroundColor: '#FFF9C4',
@@ -181,6 +181,7 @@ const ecommerceScheme = SchemeBuilder.create('E-Commerce System')
         })
         .addLaneGroup({
           permissions: { actions: [PermissionAction.ADD, PermissionAction.REORDER] },
+          laneGroupLimits: { min: 1, max: 1 },
           laneLimits: { min: 1, max: 1 },
         })
         .addLane({

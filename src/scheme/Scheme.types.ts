@@ -15,14 +15,14 @@ export type PermissionConfig = {
     actions: PermissionAction[];
 };
 
-export type StyleConfig = {
+export type Style = {
     backgroundColor?: string;
     borderStyle?: string;
     borderColor?: string;
 };
 
 export type Styled = {
-    style?: Partial<StyleConfig>;
+    style?: Partial<Style>;
 };
 
 export type Limits = {
@@ -86,6 +86,23 @@ export type FrameGroup = Styled & {
     frameLimits: Limits;
     frames?: Frame[];
     frameWidth?: number
+    allowedEntities?: Entity[];
+};
+
+export type LaneGroup = Styled & {
+    permissions?: PermissionConfig;
+    laneGroupLimits: Limits;
+    laneLimits: Limits;
+    allowedEntities?: Entity[];
+    /**
+     * Groups of entities that cannot coexist in the same lane or group.
+     * Each group represents entities that are mutually exclusive.
+     * Entities can be specified as either full entity objects (e.g., `Asset`, `Construct`)
+     * or as `EntityType` strings.
+     */
+    conflictingEntityGroups?: Entity[][]
+    laneHeight?: number;
+    lanes?: Lane[];
 };
 
 export type Lane = Styled & {
@@ -93,13 +110,12 @@ export type Lane = Styled & {
     icon?: string;
     allowedEntities?: Entity[];
     entityLimits?: Limits;
-    //allowMultipleEntities?: boolean;
-    //permissions: PermissionConfig;
+    /**
+     * Groups of entities that cannot coexist in the same lane or group.
+     * Each group represents entities that are mutually exclusive.
+     * Entities can be specified as either full entity objects (e.g., `Asset`, `Construct`)
+     * or as `EntityType` strings.
+     */
+    conflictingEntityGroups?: Entity[][];
 };
 
-export type LaneGroup = {
-    permissions?: PermissionConfig;
-    laneLimits: Limits;
-    lanes?: Lane[];
-    laneHeight?: number;
-};

@@ -1,7 +1,7 @@
-import { ConstructShape, PermissionAction, SchemeBuilder } from '../../scheme/';
+import {ConstructShape, PermissionAction, SchemeBuilder, Asset} from '../../scheme/';
 
 describe('SchemeBuilder', () => {
-    let asset: any;
+    let asset: Asset;
 
     beforeEach(() => {
         asset = {
@@ -46,7 +46,7 @@ describe('SchemeBuilder', () => {
 
             const triggersCategory = scheme.categories[0];
             expect(triggersCategory.assets).toHaveLength(1);
-            expect(triggersCategory.assets[0].label).toBe('Asset test');
+            expect(triggersCategory.assets[0].label).toBe(asset.label);
         });
     });
 
@@ -55,26 +55,28 @@ describe('SchemeBuilder', () => {
             const scheme = createBuilderWithScript()
                 .addFrameGroup({
                     label: 'Frame Group 1',
-                    permissions: { actions: [PermissionAction.ADD, PermissionAction.REORDER] },
-                    countLimits: { min: 0, max: Infinity },
-                    frames: [
-                        {
-                            label: 'Frame 1',
-                            allowedEntities: [],
-                            style: { backgroundColor: 'yellow' },
-                        },
-                    ],
+                    permissions: {actions: [PermissionAction.ADD, PermissionAction.REORDER]},
+                    frameGroupLimits: {min: 0, max: Infinity},
+                    frameLimits: {min: 1, max: 3},
                 })
+                .addFrame(
+                    {
+                        label: 'Frame 1',
+                        allowedEntities: [],
+                        style: {backgroundColor: 'yellow'},
+                    },
+                )
                 .addLaneGroup({
-                    permissions: { actions: [PermissionAction.ADD, PermissionAction.REMOVE] },
-                    laneLimits: { min: 1, max: 3 },
+                    permissions: {actions: [PermissionAction.ADD, PermissionAction.REMOVE]},
+                    laneGroupLimits: {min: 3, max: 3},
+                    laneLimits: {min: 1, max: 3},
                 })
                 .addLane({
                     label: 'Lane 1',
                     icon: 'lane-icon.png',
                     allowedEntities: [asset, 'AssetTest2'],
-                    entityLimits: { min: 0, max: 2 },
-                    style: { backgroundColor: 'lightgreen' },
+                    entityLimits: {min: 0, max: 2},
+                    style: {backgroundColor: 'lightgreen'},
                 })
                 .build();
 
@@ -83,15 +85,15 @@ describe('SchemeBuilder', () => {
 
             const script = triggersCategory.scripts[0];
             expect(script.label).toBe('Script Test');
-            expect(script.frameGroups).toHaveLength(1);
-            expect(script.laneGroups).toHaveLength(1);
+            expect(script.frameGroups?.length).toBe(1);
+            expect(script.laneGroups?.length).toBe(1);
 
             const frameGroup = script.frameGroups?.[0] ?? fail('frameGroups is undefined or empty');
-            expect(frameGroup.frames).toHaveLength(1);
-            expect(frameGroup.frames?.[0].label).toBe('Frame 1');
+            expect(frameGroup.frames?.length).toBe(1);
+            expect(frameGroup.frames?.[0]?.label).toBe('Frame 1');
 
             const laneGroup = script.laneGroups?.[0] ?? fail('laneGroups is undefined or empty');
-            expect(laneGroup.lanes).toHaveLength(1);
+            expect(laneGroup.lanes?.length).toBe(1);
             const lane = laneGroup.lanes?.[0] ?? fail('lanes is undefined or empty');
             expect(lane.label).toBe('Lane 1');
             expect(lane.icon).toBe('lane-icon.png');
