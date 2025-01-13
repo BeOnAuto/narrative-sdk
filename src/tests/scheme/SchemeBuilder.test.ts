@@ -67,7 +67,7 @@ describe('SchemeBuilder', () => {
                 })
                 .addLaneGroup({
                     permissions: { actions: [PermissionAction.ADD, PermissionAction.REMOVE] },
-                    countLimits: { min: 1, max: 3 },
+                    laneLimits: { min: 1, max: 3 },
                 })
                 .addLane({
                     label: 'Lane 1',

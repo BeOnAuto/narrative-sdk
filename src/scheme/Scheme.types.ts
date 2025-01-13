@@ -82,21 +82,24 @@ export type Frame = Styled & {
 export type FrameGroup = Styled & {
     label?: string;
     permissions?: PermissionConfig;
-    countLimits: Limits;
+    frameGroupLimits: Limits;
+    frameLimits: Limits;
     frames?: Frame[];
+    frameWidth?: number
 };
 
 export type Lane = Styled & {
     label?: string;
     icon?: string;
-    allowedEntities: Entity[];
-    entityLimits: Limits;
+    allowedEntities?: Entity[];
+    entityLimits?: Limits;
     //allowMultipleEntities?: boolean;
     //permissions: PermissionConfig;
 };
 
 export type LaneGroup = {
     permissions?: PermissionConfig;
-    countLimits: Limits;
+    laneLimits: Limits;
     lanes?: Lane[];
+    laneHeight?: number;
 };

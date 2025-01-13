@@ -169,7 +169,8 @@ const ecommerceScheme = SchemeBuilder.create('E-Commerce System')
         .addFrameGroup({
           label: 'Inventory Updates',
           permissions: { actions: [PermissionAction.ADD, PermissionAction.REMOVE] },
-          countLimits: { min: 1, max: Infinity },
+          frameGroupLimits: { min: 1, max: Infinity },
+          frameLimits: { min: 1, max: Infinity },
         })
         .addFrame({
           name: 'Stock Check',
@@ -180,7 +181,7 @@ const ecommerceScheme = SchemeBuilder.create('E-Commerce System')
         })
         .addLaneGroup({
           permissions: { actions: [PermissionAction.ADD, PermissionAction.REORDER] },
-          countLimits: { min: 1, max: 1 },
+          laneLimits: { min: 1, max: 1 },
         })
         .addLane({
           label: 'Product Updates',
