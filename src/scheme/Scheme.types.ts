@@ -77,6 +77,13 @@ export type Frame = Styled & {
     allowedEntities?: Entity[];
     //permissions?: PermissionConfig;
     //laneLimits: Limits;
+    /**
+     * Groups of entities that cannot coexist in the same lane or group.
+     * Each group represents entities that are mutually exclusive.
+     * Entities can be specified as either full entity objects (e.g., `Asset`, `Construct`)
+     * or as `EntityType` strings.
+     */
+    conflictingEntityGroups?: Entity[][]
 };
 
 export type FrameGroup = Styled & {
@@ -87,6 +94,13 @@ export type FrameGroup = Styled & {
     frames?: Frame[];
     frameWidth?: number
     allowedEntities?: Entity[];
+    /**
+     * Groups of entities that cannot coexist in the same lane or group.
+     * Each group represents entities that are mutually exclusive.
+     * Entities can be specified as either full entity objects (e.g., `Asset`, `Construct`)
+     * or as `EntityType` strings.
+     */
+    conflictingEntityGroups?: Entity[][]
 };
 
 export type LaneGroup = Styled & {
@@ -104,6 +118,7 @@ export type LaneGroup = Styled & {
     laneHeight?: number;
     entityLimits?: Limits;
     lanes?: Lane[];
+    autoIngestInCorrectLane?: boolean;
 };
 
 export type Lane = Styled & {
