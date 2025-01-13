@@ -102,6 +102,7 @@ export type LaneGroup = Styled & {
      */
     conflictingEntityGroups?: Entity[][]
     laneHeight?: number;
+    entityLimits?: Limits;
     lanes?: Lane[];
 };
 
