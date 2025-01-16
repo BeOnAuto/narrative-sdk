@@ -3,7 +3,8 @@ export enum PermissionAction {
     ADD = 1 << 0,
     REMOVE = 1 << 1,
     REORDER = 1 << 2,
-    ALL = ADD | REMOVE | REORDER,
+    UPDATE = 1 << 3,
+    ALL = ADD | REMOVE | REORDER | UPDATE,
 }
 
 export enum ConstructShape {
@@ -16,9 +17,9 @@ export type PermissionConfig = {
 };
 
 export type Style = {
-    backgroundColor?: string;
-    borderStyle?: string;
-    borderColor?: string;
+    backgroundColor?: string // '#F8F8F8'
+    borderWidth?: string; // 1
+    borderColor?: string; // '#E4E4E8'
 };
 
 export type Styled = {
@@ -53,9 +54,9 @@ export type Construct = {
 
 export type Asset = {
     label: string;
+    icon: string;
     type: string;
     description: string;
-    icon: string;
     dataSource: string;
 };
 
@@ -74,6 +75,7 @@ export type Entity = Asset | Construct | Script | EntityType;
 
 export type Frame = Styled & {
     label?: string;
+    icon?: string;
     allowedEntities?: Entity[];
     //permissions?: PermissionConfig;
     //laneLimits: Limits;
@@ -104,6 +106,8 @@ export type FrameGroup = Styled & {
 };
 
 export type LaneGroup = Styled & {
+    label?: string;
+    icon?: string;
     permissions?: PermissionConfig;
     laneGroupLimits: Limits;
     laneLimits: Limits;

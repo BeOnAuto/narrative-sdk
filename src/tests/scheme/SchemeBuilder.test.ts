@@ -25,7 +25,7 @@ describe('SchemeBuilder', () => {
             style: {
                 backgroundColor: 'lightblue',
                 borderColor: 'blue',
-                borderStyle: 'solid',
+                borderWidth: 'solid',
             },
         });
 
