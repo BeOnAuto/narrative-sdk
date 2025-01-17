@@ -18,7 +18,7 @@ export type PermissionConfig = {
 
 export type Style = {
     backgroundColor?: string // '#F8F8F8'
-    borderWidth?: string; // 1
+    borderWidth?: number; // 1
     borderColor?: string; // '#E4E4E8'
 };
 
