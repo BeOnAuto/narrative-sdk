@@ -163,7 +163,7 @@ const ecommerceScheme = SchemeBuilder.create('E-Commerce System')
           style: {
             backgroundColor: '#F3E5F5',
             borderColor: '#AB47BC',
-            borderStyle: 'dotted',
+            borderWidth: 1,
           },
         })
         .addFrameGroup({
