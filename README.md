@@ -167,13 +167,16 @@ const ecommerceScheme = SchemeBuilder.create('E-Commerce System')
           },
         })
         .addFrameGroup({
-          label: 'Inventory Updates',
+          label: { text: 'Inventory Management' },
           permissions: { actions: [PermissionAction.ADD, PermissionAction.REMOVE] },
           frameGroupLimits: { min: 1, max: Infinity },
           frameLimits: { min: 1, max: Infinity },
         })
         .addFrame({
-          label: 'Stock Check',
+          label: {
+              text: 'Stock Check',
+              icon: 'https://example.com/frame-icon.png',
+          },
           allowedEntities: [ProductEntity], // Reuse Product Entity here
           style: {
             backgroundColor: '#FFF9C4',
@@ -185,7 +188,7 @@ const ecommerceScheme = SchemeBuilder.create('E-Commerce System')
           laneLimits: { min: 1, max: 1 },
         })
         .addLane({
-          label: 'Product Updates',
+          label: {'text': 'Stock Levels'},
           icon: 'https://example.com/lane-icon.png',
           allowedEntities: [ProductEntity], // Reuse Product Entity here
           entityLimits: { min: 1, max: 1 },

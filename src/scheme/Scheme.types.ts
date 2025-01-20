@@ -12,9 +12,33 @@ export enum ConstructShape {
     SQUARE = 'square',
 }
 
+export type LabelAlignment =
+    | 'top-left'
+    | 'top-center'
+    | 'top-right'
+    | 'center-left'
+    | 'center'
+    | 'center-right'
+    | 'bottom-left'
+    | 'bottom-center'
+    | 'bottom-right';
+
+
+export type LabelConfig = {
+    text: string;
+    icon?: string;
+    alignment?: LabelAlignment;
+    fontSize?: number;
+};
+
 export type PermissionConfig = {
     actions: PermissionAction[];
 };
+
+export type AllowedEntities =
+    | { type: 'ALL' }
+    | { type: 'NONE' }
+    | { type: 'SPECIFIC'; entities: Entity[] };
 
 export type Style = {
     backgroundColor?: string // '#F8F8F8'
@@ -45,8 +69,8 @@ export type Category = {
 
 export type Construct = {
     label: string;
-    type: string;
     description: string;
+    type: string;
     backgroundColor: string;
     textColor: string;
     shape: ConstructShape;
@@ -55,8 +79,8 @@ export type Construct = {
 export type Asset = {
     label: string;
     icon: string;
-    type: string;
     description: string;
+    type: string;
     dataSource: string;
 };
 
@@ -74,9 +98,8 @@ export type EntityType = string;
 export type Entity = Asset | Construct | Script | EntityType;
 
 export type Frame = Styled & {
-    label?: string;
-    icon?: string;
-    allowedEntities?: Entity[];
+    label?: LabelConfig;
+    allowedEntities?: AllowedEntities;
     //permissions?: PermissionConfig;
     //laneLimits: Limits;
     /**
@@ -89,13 +112,13 @@ export type Frame = Styled & {
 };
 
 export type FrameGroup = Styled & {
-    label?: string;
+    label?: LabelConfig;
     permissions?: PermissionConfig;
     frameGroupLimits: Limits;
     frameLimits: Limits;
     frames?: Frame[];
     frameWidth?: number
-    allowedEntities?: Entity[];
+    allowedEntities?: AllowedEntities;
     /**
      * Groups of entities that cannot coexist in the same lane or group.
      * Each group represents entities that are mutually exclusive.
@@ -106,12 +129,11 @@ export type FrameGroup = Styled & {
 };
 
 export type LaneGroup = Styled & {
-    label?: string;
-    icon?: string;
+    label?: LabelConfig;
     permissions?: PermissionConfig;
     laneGroupLimits: Limits;
     laneLimits: Limits;
-    allowedEntities?: Entity[];
+    allowedEntities?: AllowedEntities;
     /**
      * Groups of entities that cannot coexist in the same lane or group.
      * Each group represents entities that are mutually exclusive.
@@ -126,9 +148,8 @@ export type LaneGroup = Styled & {
 };
 
 export type Lane = Styled & {
-    label?: string;
-    icon?: string;
-    allowedEntities?: Entity[];
+    label?: LabelConfig;
+    allowedEntities?: AllowedEntities;
     entityLimits?: Limits;
     /**
      * Groups of entities that cannot coexist in the same lane or group.

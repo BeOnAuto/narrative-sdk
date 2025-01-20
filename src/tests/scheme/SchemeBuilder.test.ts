@@ -54,15 +54,15 @@ describe('SchemeBuilder', () => {
         it('should allow adding a script with frame groups and lanes', () => {
             const scheme = createBuilderWithScript()
                 .addFrameGroup({
-                    label: 'Frame Group 1',
+                    label: {text: 'Frame Group 1'},
                     permissions: {actions: [PermissionAction.ADD, PermissionAction.REORDER]},
                     frameGroupLimits: {min: 0, max: Infinity},
                     frameLimits: {min: 1, max: 3},
                 })
                 .addFrame(
                     {
-                        label: 'Frame 1',
-                        allowedEntities: [],
+                        label: {text: 'Frame 1'},
+                        allowedEntities: {type: 'ALL'},
                         style: {backgroundColor: 'yellow'},
                     },
                 )
@@ -72,9 +72,8 @@ describe('SchemeBuilder', () => {
                     laneLimits: {min: 1, max: 3},
                 })
                 .addLane({
-                    label: 'Lane 1',
-                    icon: 'lane-icon.png',
-                    allowedEntities: [asset, 'AssetTest2'],
+                    label: {text: 'Lane 1', icon: 'lane-icon.png'},
+                    allowedEntities: {type: 'SPECIFIC', entities: [asset, 'AssetTest2']},
                     entityLimits: {min: 0, max: 2},
                     style: {backgroundColor: 'lightgreen'},
                 })
@@ -90,14 +89,16 @@ describe('SchemeBuilder', () => {
 
             const frameGroup = script.frameGroups?.[0] ?? fail('frameGroups is undefined or empty');
             expect(frameGroup.frames?.length).toBe(1);
-            expect(frameGroup.frames?.[0]?.label).toBe('Frame 1');
+            expect(frameGroup.frames?.[0]?.label?.text).toBe('Frame 1');
+            expect(frameGroup.frames?.[0]?.allowedEntities).toEqual({type: 'ALL'});
+            expect(frameGroup.frames?.[0]?.style?.backgroundColor).toBe('yellow');
 
             const laneGroup = script.laneGroups?.[0] ?? fail('laneGroups is undefined or empty');
             expect(laneGroup.lanes?.length).toBe(1);
             const lane = laneGroup.lanes?.[0] ?? fail('lanes is undefined or empty');
-            expect(lane.label).toBe('Lane 1');
-            expect(lane.icon).toBe('lane-icon.png');
-            expect(lane.allowedEntities).toContain('AssetTest2');
+            expect(lane.label?.text).toBe('Lane 1');
+            expect(lane.label?.icon).toBe('lane-icon.png');
+            expect(lane.allowedEntities).toEqual({type: 'SPECIFIC', entities: [asset, 'AssetTest2']});
         });
     });
 
