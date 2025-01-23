@@ -1,4 +1,4 @@
-import {ConstructShape, PermissionAction, SchemeBuilder, Asset} from '../../scheme/';
+import {Asset, ConstructShape, PermissionAction, SchemeBuilder} from '../../scheme/';
 
 describe('SchemeBuilder', () => {
     let asset: Asset;
@@ -15,19 +15,6 @@ describe('SchemeBuilder', () => {
 
     const createBuilderWithCategory = (categoryName: string) =>
         SchemeBuilder.create('Scheme Test').addCategory(categoryName);
-
-    const createBuilderWithScript = () =>
-        createBuilderWithCategory('first category').addScript({
-            label: 'Script Test',
-            type: 'ScriptTest',
-            description: 'Represents a test script.',
-            icon: 'script-icon.png',
-            style: {
-                backgroundColor: 'lightblue',
-                borderColor: 'blue',
-                borderWidth: 1,
-            },
-        });
 
     describe('Category Management', () => {
         it('should create a scheme with multiple categories', () => {
@@ -51,8 +38,28 @@ describe('SchemeBuilder', () => {
     });
 
     describe('Script and Related Elements', () => {
-        it('should allow adding a script with frame groups and lanes', () => {
-            const scheme = createBuilderWithScript()
+        it('should allow adding a script with frame groups and lanes to a construct', () => {
+
+            const scheme = createBuilderWithCategory('first category')
+                .addConstruct({
+                    label: 'Construct Test',
+                    type: 'ConstructTest',
+                    description: 'Represents a test construct.',
+                    backgroundColor: 'white',
+                    textColor: 'black',
+                    shape: ConstructShape.RECTANGLE,
+                })
+                .addScript({
+                    label: 'Script Test',
+                    type: 'ScriptTest',
+                    description: 'Represents a test script.',
+                    icon: 'script-icon.png',
+                    style: {
+                        backgroundColor: 'lightblue',
+                        borderColor: 'blue',
+                        borderWidth: 1,
+                    },
+                })
                 .addFrameGroup({
                     label: {text: 'Frame Group 1'},
                     permissions: {actions: [PermissionAction.ADD, PermissionAction.REORDER]},
@@ -80,20 +87,18 @@ describe('SchemeBuilder', () => {
                 .build();
 
             const triggersCategory = scheme.categories[0];
-            expect(triggersCategory.scripts).toHaveLength(1);
-
-            const script = triggersCategory.scripts[0];
-            expect(script.label).toBe('Script Test');
-            expect(script.frameGroups?.length).toBe(1);
-            expect(script.laneGroups?.length).toBe(1);
-
-            const frameGroup = script.frameGroups?.[0] ?? fail('frameGroups is undefined or empty');
+            expect(triggersCategory.constructs).toHaveLength(1);
+            expect(triggersCategory.constructs[0].script).toBeDefined();
+            const script = triggersCategory.constructs[0].script;
+            expect(script?.label).toBe('Script Test');
+            expect(script?.frameGroups?.length).toBe(1);
+            expect(script?.laneGroups?.length).toBe(1);
+            const frameGroup = script?.frameGroups?.[0] ?? fail('frameGroups is undefined or empty');
             expect(frameGroup.frames?.length).toBe(1);
             expect(frameGroup.frames?.[0]?.label?.text).toBe('Frame 1');
             expect(frameGroup.frames?.[0]?.allowedEntityTypes).toEqual({type: 'ALL'});
             expect(frameGroup.frames?.[0]?.style?.backgroundColor).toBe('yellow');
-
-            const laneGroup = script.laneGroups?.[0] ?? fail('laneGroups is undefined or empty');
+            const laneGroup = script?.laneGroups?.[0] ?? fail('laneGroups is undefined or empty');
             expect(laneGroup.lanes?.length).toBe(1);
             const lane = laneGroup.lanes?.[0] ?? fail('lanes is undefined or empty');
             expect(lane.label?.text).toBe('Lane 1');

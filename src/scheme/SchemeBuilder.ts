@@ -6,16 +6,18 @@ interface SchemeBuilderStart {
 
 interface SchemeBuilderCategory {
     addAsset(asset: Asset): SchemeBuilderCategory;
-    addConstruct(construct: Construct): SchemeBuilderCategory;
-    addScript(script: Script): SchemeBuilderScriptStart;
+    addConstruct(construct: Construct): SchemeBuilderConstructStart;
     addCategory(name: string): SchemeBuilderCategory;
     build(): Scheme;
+}
+
+interface SchemeBuilderConstructStart extends SchemeBuilderCategory {
+    addScript(script: Script): SchemeBuilderScriptStart;
 }
 
 interface SchemeBuilderScriptStart {
     addFrameGroup(frameGroup: FrameGroup): SchemeBuilderScriptFrameGroup;
     addLaneGroup(laneGroup: LaneGroup): SchemeBuilderScriptLaneGroup;
-    addCategory(name: string): SchemeBuilderCategory;
     build(): Scheme;
 }
 
@@ -23,7 +25,6 @@ interface SchemeBuilderScriptFrameGroup {
     addFrame(frame: Frame): SchemeBuilderScriptFrameGroup;
     addFrameGroup(frameGroup: FrameGroup): SchemeBuilderScriptFrameGroup;
     addLaneGroup(laneGroup: LaneGroup): SchemeBuilderScriptLaneGroup;
-    addCategory(name: string): SchemeBuilderCategory;
     build(): Scheme;
 }
 
@@ -31,7 +32,6 @@ interface SchemeBuilderScriptLaneGroup {
     addLane(lane: Lane): SchemeBuilderScriptLaneGroup;
     addLaneGroup(laneGroup: LaneGroup): SchemeBuilderScriptLaneGroup;
     addFrameGroup(frameGroup: FrameGroup): SchemeBuilderScriptFrameGroup;
-    addCategory(name: string): SchemeBuilderCategory;
     build(): Scheme;
 }
 
@@ -39,12 +39,14 @@ export class SchemeBuilder
     implements
         SchemeBuilderStart,
         SchemeBuilderCategory,
+        SchemeBuilderConstructStart,
         SchemeBuilderScriptStart,
         SchemeBuilderScriptFrameGroup,
         SchemeBuilderScriptLaneGroup
 {
     private readonly scheme: Scheme;
     private currentCategory?: Category;
+    private currentConstruct?: Construct;
     private currentScript?: Script;
     private currentFrameGroup?: FrameGroup;
     private currentLaneGroup?: LaneGroup;
@@ -63,8 +65,8 @@ export class SchemeBuilder
             name,
             assets: [],
             constructs: [],
-            scripts: [],
         };
+        this.scheme.categories.push(this.currentCategory);
         return this;
     }
 
@@ -74,64 +76,51 @@ export class SchemeBuilder
         return this;
     }
 
-    addConstruct(construct: Construct): SchemeBuilderCategory {
+    addConstruct(construct: Construct): SchemeBuilderConstructStart {
         this.ensureCategoryExists();
-        this.currentCategory!.constructs.push(construct);
+        this.currentConstruct = { ...construct };
+        this.currentCategory!.constructs.push(this.currentConstruct);
         return this;
     }
 
     addScript(script: Script): SchemeBuilderScriptStart {
-        this.ensureCategoryExists();
+        this.ensureConstructExists();
         this.currentScript = { ...script, frameGroups: [], laneGroups: [] };
-        this.currentCategory!.scripts.push(this.currentScript);
+        this.currentConstruct!.script = this.currentScript;
         return this;
     }
 
     addFrameGroup(frameGroup: FrameGroup): SchemeBuilderScriptFrameGroup {
         this.ensureScriptExists();
         this.currentFrameGroup = { ...frameGroup, frames: [] };
-        if(this.currentScript!.frameGroups === undefined) {
-            this.currentScript!.frameGroups = [];
-        }
-        this.currentScript!.frameGroups.push(this.currentFrameGroup);
+        this.currentScript!.frameGroups!.push(this.currentFrameGroup);
         this.currentLaneGroup = undefined; // Disallow adding lanes in this context
         return this;
     }
 
     addFrame(frame: Frame): SchemeBuilderScriptFrameGroup {
         this.ensureFrameGroupExists();
-        if(!this.currentFrameGroup!.frames) {
-            this.currentFrameGroup!.frames = [];
-        }
-        this.currentFrameGroup!.frames.push(frame);
+        this.currentFrameGroup!.frames!.push(frame);
         return this;
     }
 
     addLaneGroup(laneGroup: LaneGroup): SchemeBuilderScriptLaneGroup {
         this.ensureScriptExists();
         this.currentLaneGroup = { ...laneGroup, lanes: [] };
-        if(this.currentScript!.laneGroups === undefined) {
-            this.currentScript!.laneGroups = [];
-        }
-        this.currentScript!.laneGroups.push(this.currentLaneGroup);
+        this.currentScript!.laneGroups!.push(this.currentLaneGroup);
         this.currentFrameGroup = undefined; // Disallow adding frames in this context
         return this;
     }
 
     addLane(lane: Lane): SchemeBuilderScriptLaneGroup {
         this.ensureLaneGroupExists();
-        if(!this.currentLaneGroup!.lanes) {
-            this.currentLaneGroup!.lanes = [];
-        }
-        this.currentLaneGroup!.lanes.push(lane);
+        this.currentLaneGroup!.lanes!.push(lane);
         return this;
     }
 
     private finalizePendingItems(): void {
-        if (this.currentCategory) {
-            this.scheme.categories.push(this.currentCategory);
-            this.currentCategory = undefined;
-        }
+        this.currentCategory = undefined;
+        this.currentConstruct = undefined;
         this.currentScript = undefined;
         this.currentFrameGroup = undefined;
         this.currentLaneGroup = undefined;
@@ -140,6 +129,12 @@ export class SchemeBuilder
     private ensureCategoryExists(): void {
         if (!this.currentCategory) {
             throw new Error("Cannot add elements without a category. Call addCategory() first.");
+        }
+    }
+
+    private ensureConstructExists(): void {
+        if (!this.currentConstruct) {
+            throw new Error("Cannot add a script without a construct. Call addConstruct() first.");
         }
     }
 

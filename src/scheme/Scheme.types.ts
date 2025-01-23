@@ -38,7 +38,7 @@ export type PermissionConfig = {
 export type AllowedEntityTypes =
     | { type: 'ALL' }
     | { type: 'NONE' }
-    | { type: 'SPECIFIC'; entities: EntityType[] };
+    | { type: 'SPECIFIC'; entities: Entity[] };
 
 export type Style = {
     backgroundColor?: string // '#F8F8F8'
@@ -64,7 +64,6 @@ export type Category = {
     name: string;
     assets: Asset[];
     constructs: Construct[];
-    scripts: Script[];
 };
 
 export type Construct = {
@@ -74,6 +73,7 @@ export type Construct = {
     backgroundColor: string;
     textColor: string;
     shape: ConstructShape;
+    script?: Script;
 }
 
 export type Asset = {
@@ -159,4 +159,3 @@ export type Lane = Styled & {
      */
     conflictingEntityGroups?: Entity[][];
 };
-
