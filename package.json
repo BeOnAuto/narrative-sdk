@@ -1,6 +1,6 @@
 {
   "name": "narrative-studio-sdk",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "description": "Narrative SDK for building apps on the Narrative Studio",
   "main": "./dist/cjs/index.cjs",
   "module": "./dist/esm/index.js",

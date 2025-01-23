@@ -99,7 +99,7 @@ export type Entity = Asset | Construct | Script | EntityType;
 
 export type Frame = Styled & {
     label?: LabelConfig;
-    allowedEntityTypes?: AllowedEntityTypes;
+    allowedEntities?: AllowedEntityTypes;
     //permissions?: PermissionConfig;
     //laneLimits: Limits;
     /**
@@ -118,7 +118,7 @@ export type FrameGroup = Styled & {
     frameLimits: Limits;
     frames?: Frame[];
     frameWidth?: number
-    allowedEntityTypes?: AllowedEntityTypes;
+    allowedEntities?: AllowedEntityTypes;
     /**
      * Groups of entities that cannot coexist in the same lane or group.
      * Each group represents entities that are mutually exclusive.
@@ -133,7 +133,7 @@ export type LaneGroup = Styled & {
     permissions?: PermissionConfig;
     laneGroupLimits: Limits;
     laneLimits: Limits;
-    allowedEntityTypes?: AllowedEntityTypes;
+    allowedEntities?: AllowedEntityTypes;
     /**
      * Groups of entities that cannot coexist in the same lane or group.
      * Each group represents entities that are mutually exclusive.
@@ -149,7 +149,7 @@ export type LaneGroup = Styled & {
 
 export type Lane = Styled & {
     label?: LabelConfig;
-    allowedEntityTypes?: AllowedEntityTypes;
+    allowedEntities?: AllowedEntityTypes;
     entityLimits?: Limits;
     /**
      * Groups of entities that cannot coexist in the same lane or group.
