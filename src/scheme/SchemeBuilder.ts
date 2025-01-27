@@ -21,18 +21,16 @@ interface SchemeBuilderScriptStart {
     build(): Scheme;
 }
 
-interface SchemeBuilderScriptFrameGroup {
+interface SchemeBuilderScriptFrameGroup extends SchemeBuilderCategory{
     addFrame(frame: Frame): SchemeBuilderScriptFrameGroup;
     addFrameGroup(frameGroup: FrameGroup): SchemeBuilderScriptFrameGroup;
     addLaneGroup(laneGroup: LaneGroup): SchemeBuilderScriptLaneGroup;
-    build(): Scheme;
 }
 
-interface SchemeBuilderScriptLaneGroup {
+interface SchemeBuilderScriptLaneGroup extends SchemeBuilderCategory {
     addLane(lane: Lane): SchemeBuilderScriptLaneGroup;
     addLaneGroup(laneGroup: LaneGroup): SchemeBuilderScriptLaneGroup;
     addFrameGroup(frameGroup: FrameGroup): SchemeBuilderScriptFrameGroup;
-    build(): Scheme;
 }
 
 export class SchemeBuilder

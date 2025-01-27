@@ -67,28 +67,26 @@ export type Category = {
 };
 
 export type Construct = {
+    type: string;
     label: string;
     description: string;
-    type: string;
+    icon?: string;
     backgroundColor: string;
-    textColor: string;
+    textColor?: string;
     shape: ConstructShape;
     script?: Script;
 }
 
 export type Asset = {
-    label: string;
-    icon: string;
-    description: string;
     type: string;
+    label: string;
+    description: string;
+    icon: string;
     dataSource: string;
 };
 
 export type Script = Styled & {
-    label: string;
     type: string;
-    description: string;
-    icon: string;
     frameGroups?: FrameGroup[];
     laneGroups?: LaneGroup[];
 };

@@ -50,10 +50,7 @@ describe('SchemeBuilder', () => {
                     shape: ConstructShape.RECTANGLE,
                 })
                 .addScript({
-                    label: 'Script Test',
                     type: 'ScriptTest',
-                    description: 'Represents a test script.',
-                    icon: 'script-icon.png',
                     style: {
                         backgroundColor: 'lightblue',
                         borderColor: 'blue',
@@ -84,13 +81,21 @@ describe('SchemeBuilder', () => {
                     entityLimits: {min: 0, max: 2},
                     style: {backgroundColor: 'lightgreen'},
                 })
+                .addConstruct({
+                    label: 'Construct Test 2',
+                    type: 'ConstructTest2',
+                    description: 'Represents a test construct 2.',
+                    backgroundColor: 'white',
+                    textColor: 'black',
+                    shape: ConstructShape.RECTANGLE,
+                })
                 .build();
 
             const triggersCategory = scheme.categories[0];
-            expect(triggersCategory.constructs).toHaveLength(1);
+            expect(triggersCategory.constructs).toHaveLength(2);
             expect(triggersCategory.constructs[0].script).toBeDefined();
+            expect(triggersCategory.constructs[1].script).toBeUndefined();
             const script = triggersCategory.constructs[0].script;
-            expect(script?.label).toBe('Script Test');
             expect(script?.frameGroups?.length).toBe(1);
             expect(script?.laneGroups?.length).toBe(1);
             const frameGroup = script?.frameGroups?.[0] ?? fail('frameGroups is undefined or empty');

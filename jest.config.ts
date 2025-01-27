@@ -1,12 +1,12 @@
 import type { Config } from 'jest';
 
 const config: Config = {
-    preset: 'ts-jest', // Use ts-jest to process TypeScript
-    testEnvironment: 'node', // Use Node.js environment
-    moduleDirectories: ['node_modules', 'src'], // Resolve imports
-    testMatch: ['**/tests/**/*.test.ts', '**/?(*.)+(spec|test).ts'], // Match test files
+    preset: 'ts-jest',
+    testEnvironment: 'node',
+    moduleDirectories: ['node_modules', 'src'],
+    testMatch: ['**/tests/**/*.test.ts', '**/?(*.)+(spec|test).ts'],
     moduleNameMapper: {
-        '^@/(.*)$': '<rootDir>/src/$1', // If you use path aliases in tsconfig.json
+        '^@/(.*)$': '<rootDir>/src/$1',
     },
 };
 
