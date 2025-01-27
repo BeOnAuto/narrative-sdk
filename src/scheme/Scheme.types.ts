@@ -82,7 +82,7 @@ export type Asset = {
     label: string;
     description: string;
     icon: string;
-    dataSource: string;
+    dataSource?: string;
 };
 
 export type Script = Styled & {
