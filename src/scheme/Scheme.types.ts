@@ -12,6 +12,11 @@ export enum ConstructShape {
     SQUARE = 'square',
 }
 
+export enum LaneAlignment {
+    ALIGN_WITH_LANE_GROUP = 'align_with_lane_group',
+    INDENT_AFTER_LANE_GROUP = 'indent_after_lane_group',
+}
+
 export type LabelAlignment =
     | 'top-left'
     | 'top-center'
@@ -115,7 +120,8 @@ export type FrameGroup = Styled & {
     frameGroupLimits: Limits;
     frameLimits: Limits;
     frames?: Frame[];
-    frameWidth?: number
+    defaultFrameWidth?: number
+    width?: number;
     allowedEntities?: AllowedEntityTypes;
     /**
      * Groups of entities that cannot coexist in the same lane or group.
@@ -138,16 +144,19 @@ export type LaneGroup = Styled & {
      * Entities can be specified as either full entity objects (e.g., `Asset`, `Construct`)
      * or as `EntityType` strings.
      */
-    conflictingEntityGroups?: Entity[][]
-    laneHeight?: number;
+    conflictingEntityGroups?: Entity[][];
+    height?: number;
+    defaultLaneHeight?: number;
     entityLimits?: Limits;
     lanes?: Lane[];
     autoIngestInCorrectLane?: boolean;
+    laneAlignment?: LaneAlignment;
 };
 
 export type Lane = Styled & {
     label?: LabelConfig;
     allowedEntities?: AllowedEntityTypes;
+    height?: number;
     entityLimits?: Limits;
     /**
      * Groups of entities that cannot coexist in the same lane or group.
@@ -156,4 +165,5 @@ export type Lane = Styled & {
      * or as `EntityType` strings.
      */
     conflictingEntityGroups?: Entity[][];
+    laneAlignment?: LaneAlignment;
 };
