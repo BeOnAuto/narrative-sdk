@@ -147,10 +147,10 @@ export type LaneGroup = Styled & {
     conflictingEntityGroups?: Entity[][];
     height?: number;
     defaultLaneHeight?: number;
+    defaultLaneAlignment?: LaneAlignment;
     entityLimits?: Limits;
     lanes?: Lane[];
     autoIngestInCorrectLane?: boolean;
-    laneAlignment?: LaneAlignment;
 };
 
 export type Lane = Styled & {
@@ -165,5 +165,4 @@ export type Lane = Styled & {
      * or as `EntityType` strings.
      */
     conflictingEntityGroups?: Entity[][];
-    laneAlignment?: LaneAlignment;
 };
