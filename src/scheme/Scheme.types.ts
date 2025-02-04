@@ -12,10 +12,6 @@ export enum ConstructShape {
     SQUARE = 'square',
 }
 
-export enum LaneAlignment {
-    ALIGN_WITH_LANE_GROUP = 'align_with_lane_group',
-    INDENT_AFTER_LANE_GROUP = 'indent_after_lane_group',
-}
 
 export type LabelAlignment =
     | 'top-left'
@@ -147,10 +143,14 @@ export type LaneGroup = Styled & {
     conflictingEntityGroups?: Entity[][];
     height?: number;
     defaultLaneHeight?: number;
-    defaultLaneAlignment?: LaneAlignment;
     entityLimits?: Limits;
     lanes?: Lane[];
     autoIngestInCorrectLane?: boolean;
+    /**
+     * Determines which frame index the lane should start at within the lane group.
+     * If not specified, it aligns with the lane group.
+     */
+    laneAlignmentFrameIndex?: number;
 };
 
 export type Lane = Styled & {
