@@ -12,6 +12,12 @@ export enum ConstructShape {
     SQUARE = 'square',
 }
 
+export enum BackingFile {
+    JSON = 'json',
+    SLATE = 'slate',
+    GQL = 'gql',
+}
+
 
 export type LabelAlignment =
     | 'top-left'
@@ -45,6 +51,7 @@ export type Style = {
     backgroundColor?: string // '#F8F8F8'
     borderWidth?: number; // 1
     borderColor?: string; // '#E4E4E8'
+    textColor?: string; // '#000000'
 };
 
 export type Styled = {
@@ -67,13 +74,12 @@ export type Category = {
     constructs: Construct[];
 };
 
-export type Construct = {
+export type Construct = Styled & {
     type: string;
     label: string;
     description: string;
+    backingFile: BackingFile;
     icon?: string;
-    backgroundColor: string;
-    textColor?: string;
     shape: ConstructShape;
     script?: Script;
 }
