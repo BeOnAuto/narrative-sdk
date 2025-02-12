@@ -12,7 +12,7 @@ export enum ConstructShape {
     SQUARE = 'square',
 }
 
-export enum BackingFile {
+export enum FileType {
     JSON = 'json',
     SLATE = 'slate',
     GQL = 'gql',
@@ -31,6 +31,11 @@ export type LabelConfig = {
     fontSize?: number;
     backgroundColor?: string;
 };
+
+export type FileConfig = {
+    type: FileType;
+    defaultValue: string;
+}
 
 export type PermissionConfig = {
     actions: PermissionAction[];
@@ -72,7 +77,7 @@ export type Construct = Styled & {
     type: string;
     label: string;
     description: string;
-    backingFile?: BackingFile;
+    fileConfig?: FileConfig;
     icon?: string;
     shape: ConstructShape;
     script?: Script;
