@@ -20,15 +20,8 @@ export enum BackingFile {
 
 
 export type LabelAlignment =
-    | 'top-left'
-    | 'top-center'
-    | 'top-right'
-    | 'center-left'
+    | 'left'
     | 'center'
-    | 'center-right'
-    | 'bottom-left'
-    | 'bottom-center'
-    | 'bottom-right';
 
 
 export type LabelConfig = {
@@ -36,6 +29,7 @@ export type LabelConfig = {
     icon?: string;
     alignment?: LabelAlignment;
     fontSize?: number;
+    backgroundColor?: string;
 };
 
 export type PermissionConfig = {
@@ -78,7 +72,7 @@ export type Construct = Styled & {
     type: string;
     label: string;
     description: string;
-    backingFile: BackingFile;
+    backingFile?: BackingFile;
     icon?: string;
     shape: ConstructShape;
     script?: Script;
@@ -132,6 +126,10 @@ export type FrameGroup = Styled & {
      * or as `EntityType` strings.
      */
     conflictingEntityGroups?: Entity[][]
+    menuItems?: {
+        text: string;
+        frameGroupLabel: LabelConfig;
+    }[];
 };
 
 export type LaneGroup = Styled & {
