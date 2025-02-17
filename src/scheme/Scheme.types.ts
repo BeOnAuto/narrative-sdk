@@ -1,4 +1,4 @@
-export enum PermissionAction {
+export enum AllowedAction {
     NONE = 0,
     ADD = 1 << 0,
     REMOVE = 1 << 1,
@@ -16,6 +16,7 @@ export enum FileType {
     JSON = 'json',
     SLATE = 'slate',
     GQL = 'gql',
+    GHERKIN = 'gherkin',
 }
 
 
@@ -26,7 +27,9 @@ export type LabelAlignment =
 
 export type LabelConfig = {
     text: string;
+    textColor?: string;
     icon?: string;
+    iconColor?: string;
     alignment?: LabelAlignment;
     fontSize?: number;
     backgroundColor?: string;
@@ -34,11 +37,11 @@ export type LabelConfig = {
 
 export type FileConfig = {
     type: FileType;
-    defaultValue: string;
+    defaultValue?: string | undefined;
 }
 
-export type PermissionConfig = {
-    actions: PermissionAction[];
+export type AllowedActionsConfig = {
+    actions: AllowedAction[];
 };
 
 export type AllowedEntityTypes =
@@ -117,11 +120,11 @@ export type Frame = Styled & {
 
 export type FrameGroup = Styled & {
     label?: LabelConfig;
-    permissions?: PermissionConfig;
+    allowedActions?: AllowedActionsConfig;
     frameGroupLimits: Limits;
     frameLimits: Limits;
     frames?: Frame[];
-    defaultFrameWidth?: number
+    defaultFrameWidth?: number;
     width?: number;
     allowedEntities?: AllowedEntityTypes;
     /**
@@ -131,15 +134,27 @@ export type FrameGroup = Styled & {
      * or as `EntityType` strings.
      */
     conflictingEntityGroups?: Entity[][]
-    menuItems?: {
+
+    /**
+     * Controls the value of the FrameGroup based on menu selection.
+     * If set, selecting a menu item will update the frame group type
+     */
+    typeSelectMenu?: {
+        type: string;
         text: string;
+        icon?: string;
         frameGroupLabel: LabelConfig;
     }[];
+    /**
+     * The currently selected value from `typeSelectMenu`.
+     * Defaults to `undefined` unless a menu item is selected.
+     */
+    defaultType?: string;
 };
 
 export type LaneGroup = Styled & {
     label?: LabelConfig;
-    permissions?: PermissionConfig;
+    allowedActions?: AllowedActionsConfig;
     laneGroupLimits: Limits;
     laneLimits: Limits;
     allowedEntities?: AllowedEntityTypes;

@@ -1,4 +1,4 @@
-import {Asset, ConstructShape, PermissionAction, SchemeBuilder} from '../../scheme/';
+import {Asset, ConstructShape, AllowedAction, SchemeBuilder} from '../../scheme/';
 
 describe('SchemeBuilder', () => {
     let asset: Asset;
@@ -59,7 +59,7 @@ describe('SchemeBuilder', () => {
                 })
                 .addFrameGroup({
                     label: {text: 'Frame Group 1'},
-                    permissions: {actions: [PermissionAction.ADD, PermissionAction.REORDER]},
+                    allowedActions: {actions: [AllowedAction.ADD, AllowedAction.REORDER]},
                     frameGroupLimits: {min: 0, max: Infinity},
                     frameLimits: {min: 1, max: 3},
                 })
@@ -71,7 +71,7 @@ describe('SchemeBuilder', () => {
                     },
                 )
                 .addLaneGroup({
-                    permissions: {actions: [PermissionAction.ADD, PermissionAction.REMOVE]},
+                    allowedActions: {actions: [AllowedAction.ADD, AllowedAction.REMOVE]},
                     laneGroupLimits: {min: 3, max: 3},
                     laneLimits: {min: 1, max: 3},
                 })
