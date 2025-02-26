@@ -45,8 +45,7 @@ describe('SchemeBuilder', () => {
                     label: 'Construct Test',
                     type: 'ConstructTest',
                     description: 'Represents a test construct.',
-                    backgroundColor: 'white',
-                    textColor: 'black',
+                    style: {backgroundColor: 'white', textColor: 'black'},
                     shape: ConstructShape.RECTANGLE,
                 })
                 .addScript({
@@ -85,8 +84,7 @@ describe('SchemeBuilder', () => {
                     label: 'Construct Test 2',
                     type: 'ConstructTest2',
                     description: 'Represents a test construct 2.',
-                    backgroundColor: 'white',
-                    textColor: 'black',
+                    style: {backgroundColor: 'white', textColor: 'black'},
                     shape: ConstructShape.RECTANGLE,
                 })
                 .build();
@@ -119,8 +117,7 @@ describe('SchemeBuilder', () => {
                     label: 'Command Construct',
                     type: 'commandTest',
                     description: 'Represents a test Command.',
-                    backgroundColor: 'white',
-                    textColor: 'black',
+                    style: {backgroundColor: 'white', textColor: 'black'},
                     shape: ConstructShape.RECTANGLE,
                 })
                 .build();

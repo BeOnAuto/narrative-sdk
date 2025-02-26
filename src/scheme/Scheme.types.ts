@@ -58,6 +58,7 @@ export type Style = {
 
 export type Styled = {
     style?: Partial<Style>;
+    darkModeStyle?: Partial<Style>;
 };
 
 export type Limits = {
