@@ -33,6 +33,7 @@ export type LabelConfig = {
     alignment?: LabelAlignment;
     fontSize?: number;
     backgroundColor?: string;
+    placeHolder?: string;
 };
 
 export type FileConfig = {
