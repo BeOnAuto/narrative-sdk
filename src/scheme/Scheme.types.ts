@@ -1,3 +1,11 @@
+export enum ViewMode {
+    SIMPLE = 'simple',
+    DEV = 'dev',
+    ALL = 'all', // Default: visible in all modes
+}
+
+
+
 export enum AllowedAction {
     NONE = 0,
     ADD = 1 << 0,
@@ -6,6 +14,7 @@ export enum AllowedAction {
     UPDATE = 1 << 3,
     ALL = ADD | REMOVE | REORDER | UPDATE,
 }
+
 
 export enum ConstructShape {
     RECTANGLE = 'rectangle',
@@ -130,6 +139,10 @@ export type FrameGroup = Styled & {
     width?: number;
     allowedEntities?: AllowedEntityTypes;
     /**
+     * If true, cells in this FrameGroup span across all frames.
+     */
+    mergeCellsAcrossFrames?: boolean;
+    /**
      * Groups of entities that cannot coexist in the same lane or group.
      * Each group represents entities that are mutually exclusive.
      * Entities can be specified as either full entity objects (e.g., `Asset`, `Construct`)
@@ -177,6 +190,14 @@ export type LaneGroup = Styled & {
      * If not specified, it aligns with the lane group.
      */
     laneAlignmentFrameIndex?: number;
+
+    /**
+     * Determines which modes this lane group is visible in.
+     * - `SIMPLE`: Only visible in simple mode.
+     * - `DEV`: Only visible in developer mode.
+     * - `ALL`: Visible in both modes (default).
+     */
+    visibleInModes?: ViewMode;
 };
 
 export type Lane = Styled & {
