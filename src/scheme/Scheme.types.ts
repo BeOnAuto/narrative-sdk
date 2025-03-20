@@ -138,10 +138,7 @@ export type FrameGroup = Styled & {
     defaultFrameWidth?: number;
     width?: number;
     allowedEntities?: AllowedEntityTypes;
-    /**
-     * If true, cells in this FrameGroup span across all frames.
-     */
-    mergeCellsAcrossFrames?: boolean;
+
     /**
      * Groups of entities that cannot coexist in the same lane or group.
      * Each group represents entities that are mutually exclusive.
@@ -212,4 +209,9 @@ export type Lane = Styled & {
      * or as `EntityType` strings.
      */
     conflictingEntityGroups?: Entity[][];
+
+    /**
+     * If true, cells in this FrameGroup span across all frames.
+     */
+    spanFrameGroup?: boolean;
 };
