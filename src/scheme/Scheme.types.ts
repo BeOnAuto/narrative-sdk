@@ -43,6 +43,7 @@ export type LabelConfig = {
     fontSize?: number;
     backgroundColor?: string;
     placeHolder?: string;
+    visibleInModes?: ViewMode;
 };
 
 export type FileConfig = {
