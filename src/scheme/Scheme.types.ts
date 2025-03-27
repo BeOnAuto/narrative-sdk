@@ -104,6 +104,7 @@ export type Construct = Styled & {
     icon?: string;
     shape: ConstructShape;
     script?: Script;
+    visibleInModes?: ViewMode;
 }
 
 export type Asset = {
