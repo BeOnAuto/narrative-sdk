@@ -26,6 +26,7 @@ export enum FileType {
     SLATE = 'slate',
     GQL = 'gql',
     GHERKIN = 'gherkin',
+    SPEC = 'spec',
 }
 
 
