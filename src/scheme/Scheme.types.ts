@@ -49,6 +49,13 @@ export type LabelConfig = {
 export type FileConfig = {
     type: FileType;
     defaultValue?: string | undefined;
+    mandatoryFields?: [
+      {
+        name: string,
+        type: string,
+        defaultValue?: string | undefined,
+      },
+    ],
 }
 
 export type AllowedActionsConfig = {
