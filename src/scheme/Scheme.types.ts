@@ -111,6 +111,7 @@ export type Asset = {
     description: string;
     icon: string;
     dataSource?: string;
+    fileConfig?: FileConfig;
 };
 
 export type Script = Styled & {
