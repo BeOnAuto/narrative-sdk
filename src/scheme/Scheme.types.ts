@@ -138,6 +138,7 @@ export type Frame = Styled & {
      * or as `EntityType` strings.
      */
     conflictingEntityGroups?: Entity[][]
+    visibleInModes?: ViewMode;
 };
 
 export type FrameGroup = Styled & {
