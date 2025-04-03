@@ -3,9 +3,6 @@ export enum ViewMode {
     DEV = 'dev',
     ALL = 'all', // Default: visible in all modes
 }
-
-
-
 export enum AllowedAction {
     NONE = 0,
     ADD = 1 << 0,
@@ -28,7 +25,6 @@ export enum FileType {
     GHERKIN = 'gherkin',
     SPEC = 'spec',
 }
-
 
 export type LabelAlignment =
     | 'left'
@@ -88,6 +84,7 @@ export type Limits = {
 export type Scheme = {
     name: string;
     categories: Category[];
+    fileExtension: string;
 };
 
 export type Category = {

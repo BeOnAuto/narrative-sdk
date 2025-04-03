@@ -50,7 +50,7 @@ export class SchemeBuilder
     private currentLaneGroup?: LaneGroup;
 
     private constructor(name: string) {
-        this.scheme = { name, categories: [] };
+        this.scheme = { name, categories: [], fileExtension: 'ndd' };
     }
 
     static create(name: string): SchemeBuilderStart {

@@ -23,7 +23,7 @@ describe('Narrative', () => {
 
     describe('createScheme', () => {
         it('should send a create-scheme message and resolve on success', async () => {
-            const scheme: Scheme = { name: 'Test Scheme', categories: [] };
+            const scheme: Scheme = { name: 'Test Scheme', categories: [], fileExtension: 'ndd' };
             const message = { type: 'create-scheme', scheme };
 
             messageHandler.addMessageListener.mockImplementation((listener) => {
@@ -35,7 +35,7 @@ describe('Narrative', () => {
         });
 
         it('should reject with an error if creation fails', async () => {
-            const scheme: Scheme = { name: 'Test Scheme', categories: [] };
+            const scheme: Scheme = { name: 'Test Scheme', categories: [], fileExtension: 'ndd' };
             const message = { type: 'create-scheme', scheme };
 
             messageHandler.addMessageListener.mockImplementation((listener) => {
