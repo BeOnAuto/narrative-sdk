@@ -14,7 +14,7 @@ describe('SchemeBuilder', () => {
     });
 
     const createBuilderWithCategory = (categoryName: string) =>
-        SchemeBuilder.create('Scheme Test').addCategory(categoryName);
+        SchemeBuilder.create('Scheme Test', 'ndd').addCategory(categoryName);
 
     describe('Category Management', () => {
         it('should create a scheme with multiple categories', () => {

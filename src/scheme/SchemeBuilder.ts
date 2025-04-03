@@ -49,12 +49,12 @@ export class SchemeBuilder
     private currentFrameGroup?: FrameGroup;
     private currentLaneGroup?: LaneGroup;
 
-    private constructor(name: string) {
-        this.scheme = { name, categories: [], fileExtension: 'ndd' };
+    private constructor(name: string, fileExtension: string) {
+        this.scheme = { name, categories: [], fileExtension: fileExtension };
     }
 
-    static create(name: string): SchemeBuilderStart {
-        return new SchemeBuilder(name);
+    static create(name: string, fileExtension: string): SchemeBuilderStart {
+        return new SchemeBuilder(name, fileExtension);
     }
 
     addCategory(name: string): SchemeBuilderCategory {
