@@ -85,6 +85,8 @@ export type Scheme = {
     name: string;
     categories: Category[];
     fileExtension: string;
+    defaultConstruct?: Construct | EntityType;
+    defaultAsset?: Asset | EntityType;
 };
 
 export type Category = {
