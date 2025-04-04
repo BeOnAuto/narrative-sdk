@@ -33,6 +33,10 @@ interface SchemeBuilderScriptLaneGroup extends SchemeBuilderCategory {
     addFrameGroup(frameGroup: FrameGroup): SchemeBuilderScriptFrameGroup;
 }
 
+export interface ISchemeProvider {
+    getScheme(): Scheme;
+}
+
 export class SchemeBuilder
     implements
         SchemeBuilderStart,
