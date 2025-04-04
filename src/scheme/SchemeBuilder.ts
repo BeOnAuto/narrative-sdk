@@ -69,7 +69,7 @@ export class SchemeBuilder
     }
 
     static create(name: string, fileExtension: string, defaultConstruct?: Construct | EntityType, defaultAsset?: Asset | EntityType): SchemeBuilderStart {
-        return new SchemeBuilder(name, fileExtension);
+        return new SchemeBuilder(name, fileExtension, defaultConstruct, defaultAsset);
     }
 
     addCategory(name: string): SchemeBuilderCategory {
