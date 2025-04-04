@@ -1,4 +1,15 @@
-import { Asset, Category, Construct, Frame, FrameGroup, Lane, LaneGroup, Scheme, Script } from "./Scheme.types";
+import {
+    Asset,
+    Category,
+    Construct,
+    EntityType,
+    Frame,
+    FrameGroup,
+    Lane,
+    LaneGroup,
+    Scheme,
+    Script
+} from "./Scheme.types";
 
 interface SchemeBuilderStart {
     addCategory(name: string): SchemeBuilderCategory;
@@ -53,11 +64,11 @@ export class SchemeBuilder
     private currentFrameGroup?: FrameGroup;
     private currentLaneGroup?: LaneGroup;
 
-    private constructor(name: string, fileExtension: string) {
-        this.scheme = { name, categories: [], fileExtension: fileExtension };
+    private constructor(name: string, fileExtension: string, defaultConstruct?: Construct | EntityType, defaultAsset?: Asset | EntityType) {
+        this.scheme = { name, categories: [], fileExtension: fileExtension, defaultConstruct: defaultConstruct, defaultAsset: defaultAsset };
     }
 
-    static create(name: string, fileExtension: string): SchemeBuilderStart {
+    static create(name: string, fileExtension: string, defaultConstruct?: Construct | EntityType, defaultAsset?: Asset | EntityType): SchemeBuilderStart {
         return new SchemeBuilder(name, fileExtension);
     }
 
