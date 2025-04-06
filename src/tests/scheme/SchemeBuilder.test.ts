@@ -14,7 +14,7 @@ describe('SchemeBuilder', () => {
     });
 
     const createBuilderWithCategory = (categoryName: string) =>
-        SchemeBuilder.create('Scheme Test', 'ndd').addCategory(categoryName);
+        SchemeBuilder.create({name: 'Scheme Test',fileExtension: 'ndd', defaultConstruct: 'default-construct'}).addCategory(categoryName);
 
     describe('Category Management', () => {
         it('should create a scheme with multiple categories', () => {
@@ -23,6 +23,8 @@ describe('SchemeBuilder', () => {
                 .build();
 
             expect(scheme.name).toBe('Scheme Test');
+            expect(scheme.fileExtension).toBe('ndd');
+            expect(scheme.defaultConstruct).toBe('default-construct');
             expect(scheme.categories).toHaveLength(2);
             expect(scheme.categories[0].name).toBe('first category');
             expect(scheme.categories[1].name).toBe('second category');
