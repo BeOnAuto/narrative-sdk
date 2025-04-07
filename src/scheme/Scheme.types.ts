@@ -43,9 +43,16 @@ export type LabelConfig = {
     visibleInModes?: ViewMode;
 };
 
+export type defaultValue = {
+    type: 'scheme' | 'example';
+    value: string;
+}
+
 export type FileConfig = {
     type: FileType;
+    // ToDo: deprecated
     defaultValue?: string | undefined;
+    defaultValues?: defaultValue[];
     mandatoryFields?: [
       {
         name: string,
