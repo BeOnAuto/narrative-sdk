@@ -1,7 +1,6 @@
 import { CommandBase } from './Commands';
 import { EventBase } from './Events';
 import {Scheme} from "./scheme";
-import {SerializationRule} from "./scheme/SerializationRule";
 
 export interface IParams {}
 
@@ -79,13 +78,6 @@ export class Narrative {
     });
   }
 
-  /**
-   * Registers serialization rules for exporting entities.
-   * @param rules - An array of SerializationRules to register.
-   */
-  static registerSerializationRules(rules: SerializationRule[]): void {
-    this.messageHandler.postMessage({ type: 'register-serialization-rules', rules });
-  }
 
   /**
    * Subscribes to specified events and executes a handler function when the event is received.

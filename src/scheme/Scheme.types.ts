@@ -1,3 +1,5 @@
+import {SerializationRule} from "./SerializationRule";
+
 export enum ViewMode {
     SIMPLE = 'simple',
     DEV = 'dev',
@@ -94,6 +96,7 @@ export type Scheme = {
     fileExtension: string;
     defaultConstruct?: Construct | EntityType;
     defaultAsset?: Asset | EntityType;
+    serializationRules?: SerializationRule[];
 };
 
 export type Category = {

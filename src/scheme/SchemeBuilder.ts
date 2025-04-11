@@ -9,9 +9,11 @@ import {
     Scheme,
     Script
 } from "./Scheme.types";
+import {SerializationRule} from "./SerializationRule";
 
 interface SchemeBuilderStart {
     addCategory(name: string): SchemeBuilderCategory;
+    withSerializationRules(rules: SerializationRule[]): SchemeBuilderStart;
 }
 
 interface SchemeBuilderCategory {
@@ -46,6 +48,7 @@ interface SchemeBuilderScriptLaneGroup extends SchemeBuilderCategory {
 
 type SchemeInput = Omit<Scheme, 'categories'> & {
     categories?: Category[];
+    SerializationRules?: SerializationRule[];
 };
 
 export interface ISchemeProvider {
@@ -87,6 +90,11 @@ export class SchemeBuilder
             constructs: [],
         };
         this.scheme.categories.push(this.currentCategory);
+        return this;
+    }
+
+    withSerializationRules(rules: SerializationRule[]): SchemeBuilderStart {
+        this.scheme.serializationRules = rules;
         return this;
     }
 

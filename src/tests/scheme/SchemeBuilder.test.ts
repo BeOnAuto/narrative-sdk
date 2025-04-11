@@ -1,4 +1,6 @@
 import {Asset, ConstructShape, AllowedAction, SchemeBuilder} from '../../scheme/';
+import {EntityBase} from "../../types";
+import {SerializationRule} from "../../scheme/SerializationRule";
 
 describe('SchemeBuilder', () => {
     let asset: Asset;
@@ -36,6 +38,40 @@ describe('SchemeBuilder', () => {
             const triggersCategory = scheme.categories[0];
             expect(triggersCategory.assets).toHaveLength(1);
             expect(triggersCategory.assets[0].label).toBe(asset.label);
+        });
+    });
+
+    describe('Serialization rules', () => {
+       it('should create a scheme with serialization rules', () => {
+            const serializationRules: SerializationRule<EntityBase>[] = [
+                {
+                    match: (entity) => entity.type === 'Label',
+                    serialize: (entity) => {
+                        const labelFolder = `labels/${entity.name.toLowerCase().replace(/\s+/g, '-')}/`;
+
+                        return [
+                            { entityId: entity.id, filename: labelFolder, fileType: 'folder' },
+                            {
+                                entityId: entity.id,
+                                filename: `${labelFolder}metadata.json`,
+                                content: 'some content',
+                                fileType: 'json',
+                            },
+                            {
+                                entityId: entity.id,
+                                filename: `${labelFolder}payload.json`,
+                                content: 'some content',
+                                fileType: 'json',
+                            },
+                        ];
+                    },
+                }
+            ];
+            const scheme = SchemeBuilder.create({name: 'Scheme Test',fileExtension: 'ndd', defaultConstruct: 'default-construct'})
+                .withSerializationRules(serializationRules)
+                .addCategory('first category')
+                .build();
+            expect(scheme.serializationRules).toEqual(serializationRules);
         });
     });
 
