@@ -1,6 +1,6 @@
 import {Asset, ConstructShape, AllowedAction, SchemeBuilder} from '../../scheme/';
 import {EntityBase} from "../../types";
-import {SerializationRule} from "../../scheme/SerializationRule";
+import {SerializationRule} from "../../scheme";
 
 describe('SchemeBuilder', () => {
     let asset: Asset;
@@ -50,16 +50,16 @@ describe('SchemeBuilder', () => {
                         const labelFolder = `labels/${entity.name.toLowerCase().replace(/\s+/g, '-')}/`;
 
                         return [
-                            { entityId: entity.id, filename: labelFolder, fileType: 'folder' },
+                            { entityId: entity.id, fileName: labelFolder, fileType: 'folder' },
                             {
                                 entityId: entity.id,
-                                filename: `${labelFolder}metadata.json`,
+                                fileName: `${labelFolder}metadata.json`,
                                 content: 'some content',
                                 fileType: 'json',
                             },
                             {
                                 entityId: entity.id,
-                                filename: `${labelFolder}payload.json`,
+                                fileName: `${labelFolder}payload.json`,
                                 content: 'some content',
                                 fileType: 'json',
                             },

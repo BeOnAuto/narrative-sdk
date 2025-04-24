@@ -45,23 +45,22 @@ export type LabelConfig = {
     visibleInModes?: ViewMode;
 };
 
-export type defaultValue = {
-    type: 'scheme' | 'example';
-    value: string;
-}
+export type FileTransformFn = (input: string) => string;
+export type FileMergeFn = (source: string, target: string) => string;
+
+export type FileTransformRule = {
+    sourceKey: string;
+    targetKey: string;
+    transformToTarget: FileTransformFn;
+    transformToSource: FileTransformFn;
+    merge: FileMergeFn;
+};
 
 export type FileConfig = {
+    key: string;
     type: FileType;
-    // ToDo: deprecated
     defaultValue?: string | undefined;
-    defaultValues?: defaultValue[];
-    mandatoryFields?: [
-      {
-        name: string,
-        type: string,
-        defaultValue?: string | undefined,
-      },
-    ],
+    placeholder?: string;
 }
 
 export type AllowedActionsConfig = {
@@ -90,6 +89,22 @@ export type Limits = {
     max: number | typeof Infinity;
 };
 
+export type HandleLocation = 'top' | 'bottom' | 'left' | 'right';
+
+export enum LineType {
+    STRAIGHT = 'straight',
+    CURVED = 'curved',
+    ORTHOGONAL = 'orthogonal',
+}
+
+export type TransitionDefaults = {
+    sourceHandleLocation?: HandleLocation;
+    targetHandleLocation?: HandleLocation;
+    lineType?: LineType;
+    color?: string;
+};
+
+
 export type Scheme = {
     name: string;
     categories: Category[];
@@ -109,11 +124,14 @@ export type Construct = Styled & {
     type: string;
     label: string;
     description: string;
-    fileConfig?: FileConfig;
+    fileConfigs?: FileConfig[];
+    fileConfigsTransformRules?: FileTransformRule[];
     icon?: string;
     shape: ConstructShape;
     script?: Script;
     visibleInModes?: ViewMode;
+    hasData?: boolean;
+    transitionDefaults?: TransitionDefaults;
 }
 
 export type Asset = {
@@ -122,13 +140,16 @@ export type Asset = {
     description: string;
     icon: string;
     dataSource?: string;
-    fileConfig?: FileConfig;
+    fileConfigs?: FileConfig[];
+    fileConfigsTransformRules?: FileTransformRule[];
+    transitionDefaults?: TransitionDefaults;
 };
 
 export type Script = Styled & {
     type: string;
     frameGroups?: FrameGroup[];
     laneGroups?: LaneGroup[];
+    transitionDefaults?: TransitionDefaults;
 };
 
 export type EntityType = string;
