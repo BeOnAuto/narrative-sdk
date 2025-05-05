@@ -46,22 +46,30 @@ export type LabelConfig = {
 };
 
 export type FileTransformFn = (input: string) => string;
-export type FileMergeFn = (source: string, target: string) => string;
+export type FileMergeFn = (
+    source: string,
+    target: string
+) => { source: string; target: string };
 
 export type FileTransformRule = {
-    sourceKey: string;
-    targetKey: string;
-    transformToTarget: FileTransformFn;
-    transformToSource: FileTransformFn;
-    merge: FileMergeFn;
+    sourceName: string;
+    targetName: string;
+    transformToTarget?: FileTransformFn;
+    transformToSource?: FileTransformFn;
+    merge?: FileMergeFn;
 };
 
-export type FileConfig = {
-    key: string;
+export type FileDefinition = {
+    name: string;
     type: FileType;
     defaultValue?: string | undefined;
     placeholder?: string;
 }
+
+export type FilesConfig = {
+    files: FileDefinition[];
+    transformRules?: FileTransformRule[];
+};
 
 export type AllowedActionsConfig = {
     actions: AllowedAction[];
@@ -124,13 +132,12 @@ export type Construct = Styled & {
     type: string;
     label: string;
     description: string;
-    fileConfigs?: FileConfig[];
-    fileConfigsTransformRules?: FileTransformRule[];
+    filesConfig?: FilesConfig;
+    filesTransformRules?: FileTransformRule[];
     icon?: string;
     shape: ConstructShape;
     script?: Script;
     visibleInModes?: ViewMode;
-    hasData?: boolean;
     transitionDefaults?: TransitionDefaults;
 }
 
@@ -140,8 +147,8 @@ export type Asset = {
     description: string;
     icon: string;
     dataSource?: string;
-    fileConfigs?: FileConfig[];
-    fileConfigsTransformRules?: FileTransformRule[];
+    filesConfig?: FilesConfig;
+    filesTransformRules?: FileTransformRule[];
     transitionDefaults?: TransitionDefaults;
 };
 
