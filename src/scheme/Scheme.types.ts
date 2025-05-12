@@ -22,10 +22,10 @@ export enum ConstructShape {
 
 export enum FileType {
     JSON = 'json',
-    SLATE = 'slate',
+    SLATE = 'slate.json',
     GQL = 'gql',
-    GHERKIN = 'gherkin',
-    SPEC = 'spec',
+    FEATURE = 'feature',
+    PLAIN_TEXT = 'txt',
 }
 
 export type LabelAlignment =
@@ -45,7 +45,7 @@ export type LabelConfig = {
     visibleInModes?: ViewMode;
 };
 
-export type FileTransformFn = (input: string) => string;
+export type FileTransformFn = (input: string, currentValue?: string) => string;
 export type FileMergeFn = (
     source: string,
     target: string
@@ -54,6 +54,7 @@ export type FileMergeFn = (
 export type FileTransformRule = {
     sourceName: string;
     targetName: string;
+    description?: string;
     transformToTarget?: FileTransformFn;
     transformToSource?: FileTransformFn;
     merge?: FileMergeFn;
@@ -152,11 +153,14 @@ export type Asset = {
     transitionDefaults?: TransitionDefaults;
 };
 
+export type ScriptDetailMode = 'expand' | 'float';
+
 export type Script = Styled & {
     type: string;
     frameGroups?: FrameGroup[];
     laneGroups?: LaneGroup[];
     transitionDefaults?: TransitionDefaults;
+    detailMode: ScriptDetailMode  ;
 };
 
 export type EntityType = string;
