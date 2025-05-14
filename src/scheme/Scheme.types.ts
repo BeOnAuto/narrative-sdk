@@ -45,10 +45,16 @@ export type LabelConfig = {
     visibleInModes?: ViewMode;
 };
 
-export type FileTransformFn = (input: string, currentValue?: string) => string;
+export type FileTransformContext = Record<string, unknown>;
+export type FileTransformFn = (
+    input: string,
+    currentValue?: string,
+    context?: FileTransformContext
+) => string;
 export type FileMergeFn = (
     source: string,
-    target: string
+    target: string,
+    context?: FileTransformContext
 ) => { source: string; target: string };
 
 export type FileTransformRule = {
