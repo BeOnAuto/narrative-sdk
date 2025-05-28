@@ -7,13 +7,15 @@ import {
     Lane,
     LaneGroup,
     Scheme,
-    Script
-} from "./Scheme.types";
-import {SerializationRule} from "./SerializationRule";
+    Script,
+    ViewMode
+} from './Scheme.types';
+import { SerializationRule } from './SerializationRule';
 
 interface SchemeBuilderStart {
     addCategory(name: string): SchemeBuilderCategory;
     withSerializationRules(rules: SerializationRule[]): SchemeBuilderStart;
+    withViewModes(modes: ViewMode[]): SchemeBuilderStart;
 }
 
 interface SchemeBuilderCategory {
@@ -33,7 +35,7 @@ interface SchemeBuilderScriptStart {
     build(): Scheme;
 }
 
-interface SchemeBuilderScriptFrameGroup extends SchemeBuilderCategory{
+interface SchemeBuilderScriptFrameGroup extends SchemeBuilderCategory {
     addFrame(frame: Frame): SchemeBuilderScriptFrameGroup;
     addFrameGroup(frameGroup: FrameGroup): SchemeBuilderScriptFrameGroup;
     addLaneGroup(laneGroup: LaneGroup): SchemeBuilderScriptLaneGroup;
@@ -45,10 +47,10 @@ interface SchemeBuilderScriptLaneGroup extends SchemeBuilderCategory {
     addFrameGroup(frameGroup: FrameGroup): SchemeBuilderScriptFrameGroup;
 }
 
-
 type SchemeInput = Omit<Scheme, 'categories'> & {
     categories?: Category[];
-    SerializationRules?: SerializationRule[];
+    serializationRules?: SerializationRule[];
+    viewModes?: ViewMode[];
 };
 
 export interface ISchemeProvider {
@@ -82,6 +84,16 @@ export class SchemeBuilder
         return new SchemeBuilder(scheme);
     }
 
+    withSerializationRules(rules: SerializationRule[]): SchemeBuilderStart {
+        this.scheme.serializationRules = rules;
+        return this;
+    }
+
+    withViewModes(modes: ViewMode[]): SchemeBuilderStart {
+        this.scheme.viewModes = modes;
+        return this;
+    }
+
     addCategory(name: string): SchemeBuilderCategory {
         this.finalizePendingItems();
         this.currentCategory = {
@@ -90,11 +102,6 @@ export class SchemeBuilder
             constructs: [],
         };
         this.scheme.categories.push(this.currentCategory);
-        return this;
-    }
-
-    withSerializationRules(rules: SerializationRule[]): SchemeBuilderStart {
-        this.scheme.serializationRules = rules;
         return this;
     }
 
@@ -122,7 +129,7 @@ export class SchemeBuilder
         this.ensureScriptExists();
         this.currentFrameGroup = { ...frameGroup, frames: [] };
         this.currentScript!.frameGroups!.push(this.currentFrameGroup);
-        this.currentLaneGroup = undefined; // Disallow adding lanes in this context
+        this.currentLaneGroup = undefined; // prevent lanes in frameGroup context
         return this;
     }
 
@@ -136,7 +143,7 @@ export class SchemeBuilder
         this.ensureScriptExists();
         this.currentLaneGroup = { ...laneGroup, lanes: [] };
         this.currentScript!.laneGroups!.push(this.currentLaneGroup);
-        this.currentFrameGroup = undefined; // Disallow adding frames in this context
+        this.currentFrameGroup = undefined; // prevent frames in laneGroup context
         return this;
     }
 
@@ -144,6 +151,11 @@ export class SchemeBuilder
         this.ensureLaneGroupExists();
         this.currentLaneGroup!.lanes!.push(lane);
         return this;
+    }
+
+    build(): Scheme {
+        this.finalizePendingItems();
+        return this.scheme;
     }
 
     private finalizePendingItems(): void {
@@ -156,36 +168,31 @@ export class SchemeBuilder
 
     private ensureCategoryExists(): void {
         if (!this.currentCategory) {
-            throw new Error("Cannot add elements without a category. Call addCategory() first.");
+            throw new Error('Cannot add elements without a category. Call addCategory() first.');
         }
     }
 
     private ensureConstructExists(): void {
         if (!this.currentConstruct) {
-            throw new Error("Cannot add a script without a construct. Call addConstruct() first.");
+            throw new Error('Cannot add a script without a construct. Call addConstruct() first.');
         }
     }
 
     private ensureScriptExists(): void {
         if (!this.currentScript) {
-            throw new Error("Cannot add elements without a script. Call addScript() first.");
+            throw new Error('Cannot add elements without a script. Call addScript() first.');
         }
     }
 
     private ensureFrameGroupExists(): void {
         if (!this.currentFrameGroup) {
-            throw new Error("Cannot add frames without a frame group. Call addFrameGroup() first.");
+            throw new Error('Cannot add frames without a frame group. Call addFrameGroup() first.');
         }
     }
 
     private ensureLaneGroupExists(): void {
         if (!this.currentLaneGroup) {
-            throw new Error("Cannot add lanes without a lane group. Call addLaneGroup() first.");
+            throw new Error('Cannot add lanes without a lane group. Call addLaneGroup() first.');
         }
-    }
-
-    build(): Scheme {
-        this.finalizePendingItems();
-        return this.scheme;
     }
 }

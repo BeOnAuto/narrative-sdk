@@ -1,10 +1,14 @@
 import {SerializationRule} from "./SerializationRule";
 
-export enum ViewMode {
+export enum DefaultViewMode {
     SIMPLE = 'simple',
     DEV = 'dev',
-    ALL = 'all', // Default: visible in all modes
 }
+
+export type ViewMode = string;
+
+export type ModeOverride<T> = Partial<Record<ViewMode, Partial<T>>>;
+
 export enum AllowedAction {
     NONE = 0,
     ADD = 1 << 0,
@@ -14,11 +18,6 @@ export enum AllowedAction {
     ALL = ADD | REMOVE | REORDER | UPDATE,
 }
 
-
-export enum ConstructShape {
-    RECTANGLE = 'rectangle',
-    SQUARE = 'square',
-}
 
 export enum FileType {
     JSON = 'json',
@@ -42,7 +41,8 @@ export type LabelConfig = {
     fontSize?: number;
     backgroundColor?: string;
     placeHolder?: string;
-    visibleInModes?: ViewMode;
+    modeOverrides?: ModeOverride<LabelConfig>;
+    visible?: boolean;
 };
 
 export type FileTransformContext = Record<string, unknown>;
@@ -119,7 +119,6 @@ export type TransitionDefaults = {
     color?: string;
 };
 
-
 export type Scheme = {
     name: string;
     categories: Category[];
@@ -127,6 +126,7 @@ export type Scheme = {
     defaultConstruct?: Construct | EntityType;
     defaultAsset?: Asset | EntityType;
     serializationRules?: SerializationRule[];
+    viewModes?: ViewMode[];
 };
 
 export type Category = {
@@ -142,10 +142,12 @@ export type Construct = Styled & {
     filesConfig?: FilesConfig;
     filesTransformRules?: FileTransformRule[];
     icon?: string;
-    shape: ConstructShape;
     script?: Script;
-    visibleInModes?: ViewMode;
+    visible?: boolean;
+    modeOverrides?: ModeOverride<Construct>;
     transitionDefaults?: TransitionDefaults;
+    width?: number;
+    height?: number;
 }
 
 export type Asset = {
@@ -166,7 +168,7 @@ export type Script = Styled & {
     frameGroups?: FrameGroup[];
     laneGroups?: LaneGroup[];
     transitionDefaults?: TransitionDefaults;
-    detailMode: ScriptDetailMode  ;
+    detailMode: ScriptDetailMode;
 };
 
 export type EntityType = string;
@@ -185,7 +187,8 @@ export type Frame = Styled & {
      * or as `EntityType` strings.
      */
     conflictingEntityGroups?: Entity[][]
-    visibleInModes?: ViewMode;
+    visible?: boolean;
+    modeOverrides?: ModeOverride<Frame>;
 };
 
 export type FrameGroup = Styled & {
@@ -197,6 +200,7 @@ export type FrameGroup = Styled & {
     defaultFrameWidth?: number;
     width?: number;
     allowedEntities?: AllowedEntityTypes;
+    modeOverrides?: ModeOverride<LaneGroup>;
 
     /**
      * Groups of entities that cannot coexist in the same lane or group.
@@ -253,7 +257,10 @@ export type LaneGroup = Styled & {
      * - `DEV`: Only visible in developer mode.
      * - `ALL`: Visible in both modes (default).
      */
-    visibleInModes?: ViewMode;
+    modeOverrides?: ModeOverride<LaneGroup>;
+    visible?: boolean;
+
+    mergeCellsAcrossFrameGroups?: boolean;
 };
 
 export type Lane = Styled & {
@@ -268,9 +275,5 @@ export type Lane = Styled & {
      * or as `EntityType` strings.
      */
     conflictingEntityGroups?: Entity[][];
-
-    /**
-     * If true, cells in this FrameGroup span across all frames.
-     */
-    spanFrameGroup?: boolean;
+    modeOverrides?: ModeOverride<Lane>;
 };

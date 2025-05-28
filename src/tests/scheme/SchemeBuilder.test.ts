@@ -1,4 +1,4 @@
-import {Asset, ConstructShape, AllowedAction, SchemeBuilder} from '../../scheme/';
+import {Asset, AllowedAction, SchemeBuilder} from '../../scheme/';
 import {EntityBase} from "../../types";
 import {SerializationRule} from "../../scheme";
 
@@ -23,6 +23,8 @@ describe('SchemeBuilder', () => {
             const scheme = createBuilderWithCategory('first category')
                 .addCategory('second category')
                 .build();
+
+
 
             expect(scheme.name).toBe('Scheme Test');
             expect(scheme.fileExtension).toBe('ndd');
@@ -84,7 +86,6 @@ describe('SchemeBuilder', () => {
                     type: 'ConstructTest',
                     description: 'Represents a test construct.',
                     style: {backgroundColor: 'white', textColor: 'black'},
-                    shape: ConstructShape.RECTANGLE,
                 })
                 .addScript({
                     type: 'ScriptTest',
@@ -93,6 +94,7 @@ describe('SchemeBuilder', () => {
                         borderColor: 'blue',
                         borderWidth: 1,
                     },
+                    detailMode: 'expand'
                 })
                 .addFrameGroup({
                     label: {text: 'Frame Group 1'},
@@ -117,13 +119,13 @@ describe('SchemeBuilder', () => {
                     allowedEntities: {type: 'SPECIFIC', entities: [asset, 'AssetTest2']},
                     entityLimits: {min: 0, max: 2},
                     style: {backgroundColor: 'lightgreen'},
+                    modeOverrides: {SIMPLE: {height: 200}, DEV: {height: 300}},
                 })
                 .addConstruct({
                     label: 'Construct Test 2',
                     type: 'ConstructTest2',
                     description: 'Represents a test construct 2.',
                     style: {backgroundColor: 'white', textColor: 'black'},
-                    shape: ConstructShape.RECTANGLE,
                 })
                 .build();
 
@@ -156,7 +158,6 @@ describe('SchemeBuilder', () => {
                     type: 'commandTest',
                     description: 'Represents a test Command.',
                     style: {backgroundColor: 'white', textColor: 'black'},
-                    shape: ConstructShape.RECTANGLE,
                 })
                 .build();
 
