@@ -42,7 +42,7 @@ export type LabelConfig = {
     backgroundColor?: string;
     placeHolder?: string;
     modeOverrides?: ModeOverride<LabelConfig>;
-    visible?: boolean;
+    hide?: boolean;
 };
 
 export type FileTransformContext = Record<string, unknown>;
@@ -143,7 +143,7 @@ export type Construct = Styled & {
     filesTransformRules?: FileTransformRule[];
     icon?: string;
     script?: Script;
-    visible?: boolean;
+    hide?: boolean;
     modeOverrides?: ModeOverride<Construct>;
     transitionDefaults?: TransitionDefaults;
     width?: number;
@@ -187,7 +187,7 @@ export type Frame = Styled & {
      * or as `EntityType` strings.
      */
     conflictingEntityGroups?: Entity[][]
-    visible?: boolean;
+    hide?: boolean;
     modeOverrides?: ModeOverride<Frame>;
 };
 
@@ -251,14 +251,8 @@ export type LaneGroup = Styled & {
      */
     laneAlignmentFrameIndex?: number;
 
-    /**
-     * Determines which modes this lane group is visible in.
-     * - `SIMPLE`: Only visible in simple mode.
-     * - `DEV`: Only visible in developer mode.
-     * - `ALL`: Visible in both modes (default).
-     */
     modeOverrides?: ModeOverride<LaneGroup>;
-    visible?: boolean;
+    hide?: boolean;
 
     mergeCellsAcrossFrameGroups?: boolean;
 };
