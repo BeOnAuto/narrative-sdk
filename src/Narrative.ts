@@ -1,6 +1,7 @@
 import { CommandBase } from './Commands';
 import { EventBase } from './Events';
-import {Scheme} from "./scheme";
+import {FileTransformRule, Scheme} from "./scheme";
+import {registerFunction} from "./scheme/FunctionRegistry";
 
 export interface IParams {}
 
@@ -39,14 +40,19 @@ export class Narrative {
     this.messageHandler = handler;
   }
 
+
   /**
    * Creates a new scheme.
    * @param scheme - The scheme to create.
    * @returns Promise<void | Error> - Resolves on successful scheme creation, returns the error on failure.
    */
   static createScheme(scheme: Scheme): Promise<void | Error> {
+    // Clone scheme to avoid mutating consumer input
+    const clonedScheme = JSON.parse(JSON.stringify(scheme)) as Scheme;
+    const serializedScheme = this.serializeSchemeFunctions(clonedScheme);
+
     return new Promise((resolve, reject) => {
-      this.messageHandler.postMessage({ type: 'create-scheme', scheme });
+      this.messageHandler.postMessage({ type: 'create-scheme', scheme: serializedScheme });
       this.messageHandler.addMessageListener((event) => {
         if (event.data.type === 'command-response') {
           event.data.error ? reject(new Error(event.data.error)) : resolve();
@@ -54,6 +60,57 @@ export class Narrative {
       });
     });
   }
+
+  /**
+   * Serializes all function references in a scheme (e.g., file transform rules)
+   * so they can be postMessage-safe and later looked up by ID.
+   */
+  private static serializeSchemeFunctions(scheme: Scheme): Scheme {
+    return {
+      ...scheme,
+      categories: scheme.categories.map((category) => ({
+        ...category,
+        constructs: category.constructs.map((construct) => ({
+          ...construct,
+          filesTransformRules: this.serializeFileTransformRules(construct.filesTransformRules),
+        })),
+        assets: category.assets.map((asset) => ({
+          ...asset,
+          filesTransformRules: this.serializeFileTransformRules(asset.filesTransformRules),
+        })),
+      })),
+    };
+  }
+
+  /**
+   * Replaces function fields with ID references and registers them.
+   */
+  private static serializeFileTransformRules(rules: FileTransformRule[] = []): FileTransformRule[] {
+    return rules.map((rule) => {
+      const transformedRule = { ...rule };
+
+      if (typeof rule.transformToTarget === 'function') {
+        const id = `transformToTarget:${rule.sourceName}->${rule.targetName}`;
+        registerFunction(id, rule.transformToTarget);
+        transformedRule.transformToTarget = id;
+      }
+
+      if (typeof rule.transformToSource === 'function') {
+        const id = `transformToSource:${rule.sourceName}->${rule.targetName}`;
+        registerFunction(id, rule.transformToSource);
+        transformedRule.transformToSource = id;
+      }
+
+      if (typeof rule.merge === 'function') {
+        const id = `merge:${rule.sourceName}->${rule.targetName}`;
+        registerFunction(id, rule.merge);
+        transformedRule.merge = id;
+      }
+      return transformedRule;
+    });
+  }
+
+  //** Get<>(id: string): Promise<any> {
 
   /**
    * Sends a command to be processed, specifying the command class and its parameters.

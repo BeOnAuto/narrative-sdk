@@ -54,16 +54,17 @@ export type FileTransformFn = (
 export type FileMergeFn = (
     source: string,
     target: string,
-    context?: FileTransformContext
+    context: FileTransformContext
 ) => { source: string; target: string };
 
 export type FileTransformRule = {
     sourceName: string;
     targetName: string;
     description?: string;
-    transformToTarget?: FileTransformFn;
-    transformToSource?: FileTransformFn;
-    merge?: FileMergeFn;
+    transformToTarget?: FileTransformFn | string;
+    transformToSource?: FileTransformFn | string;
+    merge?: FileMergeFn | string;
+    transformId: string;
 };
 
 export type FileDefinition = {
