@@ -8,7 +8,13 @@ import {
     LaneGroup,
     Scheme,
     Script,
-    ViewMode
+    ViewMode,
+    ExpandableContainerMode,
+    ViewState,
+    DockPosition,
+    AllowedEntityTypes,
+    Style,
+    Limits, ExpandableConfig, DockZone
 } from './Scheme.types';
 import { SerializationRule } from './SerializationRule';
 
@@ -27,6 +33,8 @@ interface SchemeBuilderCategory {
 
 interface SchemeBuilderConstructStart extends SchemeBuilderCategory {
     addScript(script: Script): SchemeBuilderScriptStart;
+    withExpandable(config: ExpandableConfig): SchemeBuilderConstructStart;
+    addZone(zone: DockZone): SchemeBuilderConstructStart;
 }
 
 interface SchemeBuilderScriptStart {
@@ -115,6 +123,18 @@ export class SchemeBuilder
         this.ensureCategoryExists();
         this.currentConstruct = { ...construct };
         this.currentCategory!.constructs.push(this.currentConstruct);
+        return this;
+    }
+
+    withExpandable(config: ExpandableConfig): SchemeBuilderConstructStart {
+        this.ensureConstructExists();
+        this.currentConstruct!.expandable = { ...config };
+        return this;
+    }
+    addZone(zone: DockZone): SchemeBuilderConstructStart {
+        this.ensureConstructExists();
+        if (!this.currentConstruct!.zones) this.currentConstruct!.zones = [];
+        this.currentConstruct!.zones.push({ ...zone });
         return this;
     }
 

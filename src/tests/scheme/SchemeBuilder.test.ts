@@ -150,7 +150,7 @@ describe('SchemeBuilder', () => {
         });
     });
 
-    describe('Validation for Constructs', () => {
+    describe('Constructs with zones and expandable', () => {
         it('should allow adding constructs to a category', () => {
             const scheme = createBuilderWithCategory('Commands')
                 .addConstruct({
@@ -159,12 +159,23 @@ describe('SchemeBuilder', () => {
                     description: 'Represents a test Command.',
                     style: {backgroundColor: 'white', textColor: 'black'},
                 })
+                .addZone({
+                    label: 'Command Zone',
+                    position: "top"
+                })
+                .withExpandable({
+                    containerMode: 'row',
+                    })
                 .build();
 
             const commandsCategory = scheme.categories[0];
             expect(commandsCategory.constructs).toHaveLength(1);
             const construct = commandsCategory.constructs[0];
-            expect(construct.label).toBe('Command Construct');
+            expect(construct.zones).toHaveLength(1);
+            const zone = construct.zones?.[0];
+            expect(zone?.label).toBe('Command Zone');
+            expect(construct.expandable).toBeDefined();
+            expect(construct.expandable?.containerMode).toBe('row');
             expect(construct.type).toBe('commandTest');
         });
     });

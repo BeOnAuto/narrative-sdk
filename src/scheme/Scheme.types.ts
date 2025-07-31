@@ -136,6 +136,32 @@ export type Category = {
     constructs: Construct[];
 };
 
+export type ViewState = 'collapsed' | 'expanded';
+
+export type ExpandableContainerMode =
+    | 'row'  // in the future we will add more modes like 'column', 'grid', etc.
+
+
+
+export type ExpandableConfig = Style & {
+    containerMode: ExpandableContainerMode;
+    defaultState?: ViewState;
+    minWidth?: number;
+    reorderable?: boolean;
+    allowedEntities?: AllowedEntityTypes;
+};
+
+export type DockPosition = 'top' | 'bottom';
+
+export type DockZone = Styled & {
+    position: DockPosition;
+    label: string
+    allowedEntities?: AllowedEntityTypes;
+    entityLimits?: Limits;
+    height?: number;
+};
+
+
 export type Construct = Styled & {
     type: string;
     label: string;
@@ -149,6 +175,8 @@ export type Construct = Styled & {
     transitionDefaults?: TransitionDefaults;
     width?: number;
     height?: number;
+    expandable?: ExpandableConfig;
+    zones?: DockZone[];
 }
 
 export type Asset = {
