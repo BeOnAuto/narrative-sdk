@@ -134,18 +134,18 @@ export type Category = {
     name: string;
     assets: Asset[];
     constructs: Construct[];
+    containers: Container[];
 };
 
-export type ViewState = 'collapsed' | 'expanded';
-
-export type ExpandableContainerMode =
+export type ContainerMode =
     | 'row'  // in the future we will add more modes like 'column', 'grid', etc.
 
-
-
-export type ExpandableConfig = Style & {
-    containerMode: ExpandableContainerMode;
-    defaultState?: ViewState;
+export type Container = Style & {
+    type: string;
+    description: string;
+    containerMode: ContainerMode;
+    width: number;
+    height: number;
     minWidth?: number;
     reorderable?: boolean;
     allowedEntities?: AllowedEntityTypes;
@@ -175,9 +175,9 @@ export type Construct = Styled & {
     transitionDefaults?: TransitionDefaults;
     width?: number;
     height?: number;
-    expandable?: ExpandableConfig;
     zones?: DockZone[];
 }
+
 
 export type Asset = {
     type: string;

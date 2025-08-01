@@ -150,8 +150,8 @@ describe('SchemeBuilder', () => {
         });
     });
 
-    describe('Constructs with zones and expandable', () => {
-        it('should allow adding constructs to a category', () => {
+    describe('Constructs with zones', () => {
+        it('should allow adding a construct with zones to a category', () => {
             const scheme = createBuilderWithCategory('Commands')
                 .addConstruct({
                     label: 'Command Construct',
@@ -159,13 +159,11 @@ describe('SchemeBuilder', () => {
                     description: 'Represents a test Command.',
                     style: {backgroundColor: 'white', textColor: 'black'},
                 })
-                .addZone({
+                .withZones([{
                     label: 'Command Zone',
-                    position: "top"
-                })
-                .withExpandable({
-                    containerMode: 'row',
-                    })
+                    position: "top",
+                    allowedEntities: { type: 'ALL' },
+                }])
                 .build();
 
             const commandsCategory = scheme.categories[0];
@@ -174,9 +172,38 @@ describe('SchemeBuilder', () => {
             expect(construct.zones).toHaveLength(1);
             const zone = construct.zones?.[0];
             expect(zone?.label).toBe('Command Zone');
-            expect(construct.expandable).toBeDefined();
-            expect(construct.expandable?.containerMode).toBe('row');
-            expect(construct.type).toBe('commandTest');
+            expect(zone?.position).toBe('top');
+            expect(zone?.allowedEntities).toEqual({ type: 'ALL' });
         });
     });
+
+    describe('containers', () => {
+        it('should allow adding a container to a category', () => {
+            const scheme = createBuilderWithCategory('Commands')
+                .addContainer({
+                    type: 'ContainerTest',
+                    description: 'Represents a test container.',
+                    containerMode: 'row',
+                    width: 200,
+                    height: 100,
+                    minWidth: 200,
+                    reorderable: true,
+                    allowedEntities: { type: 'ALL' },
+                })
+                .build();
+
+            const commandsCategory = scheme.categories[0];
+            expect(commandsCategory.containers).toHaveLength(1);
+            const construct = commandsCategory.containers[0];
+            expect(construct.type).toBe('ContainerTest');
+            expect(construct.description).toBe('Represents a test container.');
+            expect(construct.containerMode).toBe('row');
+            expect(construct.width).toBe(200);
+            expect(construct.height).toBe(100);
+            expect(construct.minWidth).toBe(200);
+            expect(construct.reorderable).toBe(true);
+            expect(construct.allowedEntities).toEqual({ type: 'ALL' });
+        });
+    });
+
 });

@@ -9,51 +9,60 @@ import {
     Scheme,
     Script,
     ViewMode,
-    ExpandableContainerMode,
-    ViewState,
-    DockPosition,
-    AllowedEntityTypes,
-    Style,
-    Limits, ExpandableConfig, DockZone
+    Container, DockZone
 } from './Scheme.types';
-import { SerializationRule } from './SerializationRule';
+import {SerializationRule} from './SerializationRule';
 
 interface SchemeBuilderStart {
     addCategory(name: string): SchemeBuilderCategory;
+
     withSerializationRules(rules: SerializationRule[]): SchemeBuilderStart;
+
     withViewModes(modes: ViewMode[]): SchemeBuilderStart;
 }
 
 interface SchemeBuilderCategory {
     addAsset(asset: Asset): SchemeBuilderCategory;
+
     addConstruct(construct: Construct): SchemeBuilderConstructStart;
+
     addCategory(name: string): SchemeBuilderCategory;
+
+    addContainer(container: Container): SchemeBuilderCategory;
+
     build(): Scheme;
 }
 
 interface SchemeBuilderConstructStart extends SchemeBuilderCategory {
     addScript(script: Script): SchemeBuilderScriptStart;
-    withExpandable(config: ExpandableConfig): SchemeBuilderConstructStart;
-    addZone(zone: DockZone): SchemeBuilderConstructStart;
+
+    withZones(zone: DockZone[]): SchemeBuilderConstructStart;
 }
 
 interface SchemeBuilderScriptStart {
     addFrameGroup(frameGroup: FrameGroup): SchemeBuilderScriptFrameGroup;
+
     addLaneGroup(laneGroup: LaneGroup): SchemeBuilderScriptLaneGroup;
+
     build(): Scheme;
 }
 
 interface SchemeBuilderScriptFrameGroup extends SchemeBuilderCategory {
     addFrame(frame: Frame): SchemeBuilderScriptFrameGroup;
+
     addFrameGroup(frameGroup: FrameGroup): SchemeBuilderScriptFrameGroup;
+
     addLaneGroup(laneGroup: LaneGroup): SchemeBuilderScriptLaneGroup;
 }
 
 interface SchemeBuilderScriptLaneGroup extends SchemeBuilderCategory {
     addLane(lane: Lane): SchemeBuilderScriptLaneGroup;
+
     addLaneGroup(laneGroup: LaneGroup): SchemeBuilderScriptLaneGroup;
+
     addFrameGroup(frameGroup: FrameGroup): SchemeBuilderScriptFrameGroup;
 }
+
 
 type SchemeInput = Omit<Scheme, 'categories'> & {
     categories?: Category[];
@@ -66,14 +75,12 @@ export interface ISchemeProvider {
 }
 
 export class SchemeBuilder
-    implements
-        SchemeBuilderStart,
+    implements SchemeBuilderStart,
         SchemeBuilderCategory,
         SchemeBuilderConstructStart,
         SchemeBuilderScriptStart,
         SchemeBuilderScriptFrameGroup,
-        SchemeBuilderScriptLaneGroup
-{
+        SchemeBuilderScriptLaneGroup {
     private readonly scheme: Scheme;
     private currentCategory?: Category;
     private currentConstruct?: Construct;
@@ -108,8 +115,16 @@ export class SchemeBuilder
             name,
             assets: [],
             constructs: [],
+            containers: [],
         };
         this.scheme.categories.push(this.currentCategory);
+        return this;
+    }
+
+    addConstruct(construct: Construct): SchemeBuilderConstructStart {
+        this.ensureCategoryExists();
+        this.currentConstruct = {...construct};
+        this.currentCategory!.constructs.push(this.currentConstruct);
         return this;
     }
 
@@ -119,35 +134,30 @@ export class SchemeBuilder
         return this;
     }
 
-    addConstruct(construct: Construct): SchemeBuilderConstructStart {
+    addContainer(container: Container): SchemeBuilderCategory {
         this.ensureCategoryExists();
-        this.currentConstruct = { ...construct };
-        this.currentCategory!.constructs.push(this.currentConstruct);
+        if (!this.currentCategory!.containers) this.currentCategory!.containers = [];
+        this.currentCategory!.containers.push(container);
         return this;
     }
 
-    withExpandable(config: ExpandableConfig): SchemeBuilderConstructStart {
-        this.ensureConstructExists();
-        this.currentConstruct!.expandable = { ...config };
-        return this;
-    }
-    addZone(zone: DockZone): SchemeBuilderConstructStart {
+    withZones(zones: DockZone[]): SchemeBuilderConstructStart {
         this.ensureConstructExists();
         if (!this.currentConstruct!.zones) this.currentConstruct!.zones = [];
-        this.currentConstruct!.zones.push({ ...zone });
+        this.currentConstruct!.zones = zones;
         return this;
     }
 
     addScript(script: Script): SchemeBuilderScriptStart {
         this.ensureConstructExists();
-        this.currentScript = { ...script, frameGroups: [], laneGroups: [] };
+        this.currentScript = {...script, frameGroups: [], laneGroups: []};
         this.currentConstruct!.script = this.currentScript;
         return this;
     }
 
     addFrameGroup(frameGroup: FrameGroup): SchemeBuilderScriptFrameGroup {
         this.ensureScriptExists();
-        this.currentFrameGroup = { ...frameGroup, frames: [] };
+        this.currentFrameGroup = {...frameGroup, frames: []};
         this.currentScript!.frameGroups!.push(this.currentFrameGroup);
         this.currentLaneGroup = undefined; // prevent lanes in frameGroup context
         return this;
@@ -161,7 +171,7 @@ export class SchemeBuilder
 
     addLaneGroup(laneGroup: LaneGroup): SchemeBuilderScriptLaneGroup {
         this.ensureScriptExists();
-        this.currentLaneGroup = { ...laneGroup, lanes: [] };
+        this.currentLaneGroup = {...laneGroup, lanes: []};
         this.currentScript!.laneGroups!.push(this.currentLaneGroup);
         this.currentFrameGroup = undefined; // prevent frames in laneGroup context
         return this;
